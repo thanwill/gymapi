@@ -2,24 +2,14 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import base64
+from .utils import process_dataset, get_correlations
 import os
-import io
 import csv
 from django.conf import settings
 from api.models import Dataset
 from .serializers import DatasetSerializer
 import uuid
-import json
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix
+import pandas as pd
 
 class UploadDatasetView(APIView):
     parser_classes = [MultiPartParser, FormParser]
@@ -80,9 +70,15 @@ class ListDatasetsViewByID(APIView):
             return Response({"error": "Dataset not found"}, status=status.HTTP_404_NOT_FOUND)
         
 class RemoveDatasetView(APIView):
-    def delete(self, request, dataset_id):
+    def delete(self, request, dataset_id):            
+        
         try:
+            if not dataset_id:
+                return Response({"error": "Dataset ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            
             dataset = Dataset.objects.get(id=dataset_id)
+            
             dataset.delete()
             return Response(
                 {
@@ -93,52 +89,50 @@ class RemoveDatasetView(APIView):
             return Response({"error": "Dataset not found"}, status=status.HTTP_404_NOT_FOUND)
 
 class CreateAnalysisView(APIView):
+
     def get(self, request, dataset_id):
         try:
             dataset = Dataset.objects.get(id=dataset_id)
             file_path = os.path.join(settings.MEDIA_ROOT, 'datasets', dataset.filename)
-            df = pd.read_csv(file_path)
-
-            # Informações gerais sobre o dataset
-            buffer = io.StringIO()
-            df.info(buf=buffer)
-            info = buffer.getvalue()
-
-            # Estatísticas descritivas do dataset
-            describe = df.describe().to_json()
-
-            # Valores ausentes no dataset
-            missing_values = df.isnull().sum().to_json()
-
-            # Visualizar a distribuição das variáveis numéricas
-            plt.figure(figsize=(15, 10))
-            df.hist(bins=30, figsize=(15, 10))
-            plt.tight_layout()
-            img_buffer = io.BytesIO()
-            plt.savefig(img_buffer, format='png')
-            img_buffer.seek(0)
-            img_str = base64.b64encode(img_buffer.read()).decode('utf-8')
-            plt.close()
-
-            # Convertendo as variáveis categóricas em numéricas
-            df = pd.get_dummies(df, drop_first=True)
-            head = json.loads(df.head().to_json())
-            describe = json.loads(describe)
-            missing_values = json.loads(missing_values)
-
-            response_data = {
-                "info": info,
-                "describe": describe,
-                "missing_values": missing_values,
-                "histogram": img_str,
-                "head": head
-            }
+            
+            # Obtém o target_column dos parâmetros da requisição
+            target_column = request.query_params.get('target_column')
+            if not target_column:
+                return Response({"error": "target_column parameter is required"}, status=status.HTTP_400_BAD_REQUEST)                    
+            
+            # Processa o dataset
+            response_data = process_dataset(file_path, target_column, dataset_id)
 
             return Response(response_data, status=status.HTTP_200_OK)
         except Dataset.DoesNotExist:
             return Response({"error": "Dataset not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class GetCorrelationsView(APIView):
+    
+    def get(self, request, dataset_id):
+        try:
+            dataset = Dataset.objects.get(id=dataset_id)
+            file_path = os.path.join(settings.MEDIA_ROOT, 'datasets', dataset.filename)
+            
+            # Carrega o dataset
+            df = pd.read_csv(file_path)
+            
+            # Obtém as colunas dos parâmetros da requisição
+            columns = request.query_params.getlist('columns')
+            if not columns:
+                return Response({"error": "columns parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Calcula as correlações
+            correlations = get_correlations(df, columns)
+            
+            return Response(correlations, status=status.HTTP_200_OK)
+        except Dataset.DoesNotExist:
+            return Response({"error": "Dataset not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
         
 class AnalysisResultsView(APIView):
     def get(self, request, analysis_id):
