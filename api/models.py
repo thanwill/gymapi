@@ -8,7 +8,7 @@ class Dataset(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     columns = models.JSONField()
     status = models.CharField(max_length=255)
-    error_message = models.CharField(max_length=255)
+    error_message = models.CharField(max_length=255)    
     
     def __str__(self):
         return self.filename
@@ -22,11 +22,25 @@ class Analyses(models.Model):
     analysis_type = models.CharField(max_length=255)
     parameters = models.JSONField()
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=255)
+    status = models.CharField(max_length=255, choices=[
+        ('PENDING', 'Pending'),
+        ('PROCESSING', 'Processing'),
+        ('PROCESSED', 'Processed'),
+        ('ERROR', 'Error'),
+    ])
     error_message = models.CharField(max_length=255)    
     
     def __str__(self):
         return self.id
+    
+class ColumnMetadata(models.Model):
+    dataset = models.ForeignKey(Dataset, related_name='column_metadata', on_delete=models.CASCADE)
+    column_name = models.CharField(max_length=255)
+    data_type = models.CharField(max_length=50)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.column_name} - {self.data_type}"
     
 # criar um modelo para os resultados
 # id, analysus_id (fk), result_data (json), created_at datetime
