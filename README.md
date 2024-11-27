@@ -26,7 +26,7 @@ GymAPI é uma aplicação Django para gerenciar datasets de academias, realizar 
 1. Clone o repositório:
 
    ```sh
-   git clone [https://github.com/seu-usuario/gymapi.git](https://github.com/thanwill/gymapi.git)
+   git clone https://github.com/thanwill/gymapi.git
    cd gymapi
    ```
 
