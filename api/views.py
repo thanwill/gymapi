@@ -8,6 +8,7 @@ from pandas.api.types import is_numeric_dtype, is_categorical_dtype
 from .utils import process_dataset, get_correlations, get_column_description
 from .serializers import DatasetSerializer
 from .models import Dataset, ColumnMetadata, Analyses
+from django.shortcuts import render
 
 import os
 import csv
@@ -20,6 +21,9 @@ import uuid
 import pandas as pd
 from django.conf import settings
 from sklearn.linear_model import LinearRegression
+
+def index(request):
+    return render(request, 'index.html')
 
 class UploadDatasetView(APIView):
     parser_classes = [MultiPartParser, FormParser]
@@ -312,15 +316,19 @@ class FilteredAnalysisResultsView(View):
             analysis_type = request.GET.get('analysis_type')
             status = request.GET.get('status')
             target_column = request.GET.get('target_column')
+            database_id = request.GET.get('database_id')
 
             # Filtra as análises com base nos parâmetros fornecidos
             analyses = Analyses.objects.all()
+            
             if analysis_type:
                 analyses = analyses.filter(analysis_type=analysis_type)
             if status:
                 analyses = analyses.filter(status=status)
             if target_column:
                 analyses = analyses.filter(parameters__target_column=target_column)
+            if database_id:
+                analyses = analyses.filter(dataset_id=database_id)
 
             return JsonResponse(list(analyses.values()), safe=False)
         except Exception as e:
@@ -399,3 +407,4 @@ class PredictView(APIView):
             return Response({"error": "Dataset not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+

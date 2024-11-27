@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Exibição de Dados</title>
+    <!-- Bootstrap CSS via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav" style="height: 10vh;">                
+                
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+
+        <div class="d-flex align-items-start">
+            <div class="nav flex-column nav-pills col-10 offset-1 col-lg-3 " id="v-pills-tab" role="tablist"
+                aria-orientation="vertical">
+                <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill"
+                    data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home"
+                    aria-selected="true">Datasets</button>
+                <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill"
+                    data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile"
+                    aria-selected="false">Análises</button>
+
+                <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill"
+                    data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages"
+                    aria-selected="false">Resultados</button>
+
+                <div id="search-list" class="mt-5">
+                    <input class="form-control" list="datalistOptions" id="exampleDataList"
+                        placeholder="Pesquisar definições">
+                    <datalist id="datalistOptions"></datalist>
+                </div>
+
+
+                <div class="mt-3" style="max-height: 500px; overflow-y: auto;">
+                    <div id="columns-metadata-content" class="mt-3"></div>
+                </div>
+            </div>
+
+            <div class="tab-content col-10 offset-1 col-lg-6" id="v-pills-tabContent">
+
+                <!-- INFORMAÇÃO DO DATASETS CADASTRADOS -->
+                <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                    aria-labelledby="v-pills-home-tab" tabindex="0">
+
+                    <div class="col-10 offset-1">
+                        <div class="mb-5 ">
+                            <label for="formFile" class="form-label">
+                                <h4>Envie seu arquivo</h4>
+                                <p>
+                                    <small>Envie um arquivo CSV para ser processado.</small>
+                                </p>
+                            </label>
+                            <input class="form-control" type="file" id="formFile">
+                        </div>
+
+                        <div id="dataset-content" class="mt-3"></div>
+                        <div id="resultados-content" class="mt-3"></div>
+
+                    </div>
+
+                </div>
+
+                <!-- SOLICITANDO NOVAS ANÁLISES -->
+                <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"
+                    tabindex="0">
+                    <div class="col-10 offset-1">
+
+                        <h4>Selecione o dataset</h4>
+                        <p>
+                            <small>Selecione o dataset que deseja analisar.</small>
+                        </p>
+                        <div id="alert-message" class="m-3"></div>
+                        <div class="form">
+                            <select class="form-select" aria-label="Relação de dataset cadastrado">
+                                <option selected>Selecione o seu database</option>
+                            </select>
+                        </div>
+
+                        <div id="filter-select" class="mt-3"></div>
+                        <div id="target_column" class="mt-3"></div>
+
+                        <div id="datalist-options" class="m-3"></div>
+
+                        <div id="carrosel-images" class="mt-3"></div>
+
+                        <div class="accordion mt-4" id="accordion-analysis"></div>
+
+                    </div>
+
+                </div>
+
+                <!-- CONSUMINDO A BASE TREINADA -->
+                <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab"
+                    tabindex="0">
+
+                    <div class="col-10 offset-1">
+                        <h4>Consulte os resultados</h4>
+                        <p>
+                            <small>Confira a análise que deseja visualizar.</small>
+                        </p>
+                        <div class="">
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-light text-center text-lg-start mt-5">
+        <div class="container p-4">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Sobre</h5>
+                    <p>
+                        Este é um projeto para exibição e análise de dados. Envie seus arquivos CSV e visualize os
+                        resultados das análises.
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Entidades</h5>
+                    <ul class="list-unstyled mb-0">
+
+                        <li>
+                            <a href="#!" class="text-dark">Datasets</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-dark">Análises</a>
+                        </li>
+                        <li>
+                            <a href="#!" class="text-dark">Resultados</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Contato</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="mailto:contato@exemplo.com" class="text-dark">jonathan14willian@gmail.com</a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-3 bg-dark text-white">
+            © 2023 Trabalho Final
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS via CDN (incluindo Popper.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // funcao para retornar todos os dataset cadastrados curl --location 'http://localhost:8000/api/datasets'
+        async function getDatasets() {
+            const response = await fetch('http://localhost:8000/api/datasets');
+            const data = await response.json();
+            return data;
+        }
+
+        // funcnao para remover um dataset pelo id curl --location --request DELETE 'http://localhost:8000/api/datasets/5/remove'
+        async function removeDataset(id) {
+            const response = await fetch(`http://localhost:8000/api/datasets/${id}/remove`, {
+                method: 'DELETE'
+            });
+            let data;
+            try {
+                data = await response.json();
+            } catch (error) {
+                data = { error: 'Failed to parse JSON response' };
+            }
+            return data;
+        }
+
+        // função para upload de arquivo
+        async function uploadFile() {
+            const formData = new FormData();
+            formData.append('file', document.querySelector('input[type="file"]').files[0]);
+            const response = await fetch('http://localhost:8000/api/datasets/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            return data;
+        }
+
+        // função curl --location 'http://localhost:8000/api/datasets/9'
+        async function getDataset(id) {
+            const response = await fetch(`http://localhost:8000/api/datasets/${id}`);
+            const data = await response.json();
+            renderColumnsMetadata(data.columns_metadata);
+            return data;
+        }
+
+        // fetch para obter análise, passando um target_column 
+        // curl --location 'http://localhost:8000/api/analyses/24?target_column=workout_frequency_(days%2Fweek)'
+        async function getAnalysis(id, targetColumn) {
+            const response = await fetch(`http://localhost:8000/api/analyses/${id}?target_column=${targetColumn}`);
+            const data = await response.json();
+            return data;
+        }
+
+        // obter curl --location 'http://localhost:8000/api/analyses'
+        async function getAnalyses() {
+            const response = await fetch('http://localhost:8000/api/analyses');
+            const data = await response.json();
+            renderAnalysesCollapse(data);
+            return data;
+        }
+
+        async function carregarAnalises() {
+            const analises = await getAnalyses();
+
+            // se length for maior que 0, chama a função
+            if (analises.length > 0) {
+                renderAnalysesCollapse(analises);
+            } else {
+                alerta('Nenhuma análise encontrada', 'alert-info');
+            }
+        }
+
+        // curl de analises com até 4 filtros curl --location 'http://localhost:8000/api/analyses/filtered?analysis_type=PREDICTION&status=COMPLETED&target_column=experience_level&database_id=46'
+
+        async function getAnalysesFiltered(database_id) {
+            const response = await fetch(`http://localhost:8000/api/analyses/filtered?database_id=${database_id}`);
+            const data = await response.json();
+
+            // em caso de sucesso, renderAnalysesAccordion(analisets);
+            if (data.length > 0) {
+                renderAnalysesAccordion(data);
+            } else {
+                alerta('Nenhuma análise encontrada', 'alert-info');
+            }
+
+            return data;
+        }
+
+        const analisets = [
+            {
+                "id": 2,
+                "dataset_id_id": 40,
+                "analysis_type": "PREDICTION",
+                "parameters": {
+                    "target_column": "max_bpm"
+                },
+                "created_at": "2024-11-26T21:07:06.835Z",
+                "status": "COMPLETED",
+                "error_message": ""
+            },
+            {
+                "id": 4,
+                "dataset_id_id": 40,
+                "analysis_type": "PREDICTION",
+                "parameters": {
+                    "target_column": "age"
+                },
+                "created_at": "2024-11-26T23:37:36.538Z",
+                "status": "COMPLETED",
+                "error_message": ""
+            }
+        ]
+
+        /*
+        <div class="card text-center">
+        <div class="card-header">
+            Featured
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Special title treatment</h5>
+            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+        <div class="card-footer text-body-secondary">
+            2 days ago
+        </div>
+        </div>
+        */
+
+
+
+        function renderAnalysesCollapse(analises) {
+            const container = document.getElementById('analises-disponiveis');
+            container.innerHTML = '';
+
+            /*
+                "id": 4,
+                "dataset_id_id": 40,
+                "analysis_type": "PREDICTION",
+                "parameters": {
+                    "target_column": "age"
+                },
+                "created_at": "2024-11-26T23:37:36.538Z",
+                "status": "COMPLETED",
+                "error_message": ""
+            */
+
+            analises.forEach(analise => {
+                const card = document.createElement('div');
+                card.classList.add('card', 'text-center', 'mb-3');
+
+                const cardHeader = document.createElement('div');
+                cardHeader.classList.add('card-header');
+                cardHeader.textContent = `Análise ID: ${analise.id}`;
+
+                const cardBody = document.createElement('div');
+                cardBody.classList.add('card-body');
+
+                const cardTitle = document.createElement('h5');
+                cardTitle.classList.add('card-title');
+                cardTitle.textContent = `Dataset ID: ${analise.dataset_id_id}`;
+
+                const cardText = document.createElement('p');
+                cardText.classList.add('card-text');
+                cardText.textContent = `Tipo de Análise: ${analise.analysis_type}`;
+
+                const cardLink = document.createElement('a');
+                cardLink.href = '#';
+                cardLink.classList.add('btn', 'btn-primary');
+                cardLink.textContent = 'Ver detalhes';
+
+                cardBody.appendChild(cardTitle);
+                cardBody.appendChild(cardText);
+                cardBody.appendChild(cardLink);
+
+                const cardFooter = document.createElement('div');
+                cardFooter.classList.add('card-footer', 'text-body-secondary');
+                cardFooter.textContent = `Criado em: ${formatarData(analise.created_at)}`;
+
+                card.appendChild(cardHeader);
+                card.appendChild(cardBody);
+                card.appendChild(cardFooter);
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderAnalysesOld(analyses) {
+            const container = document.getElementById('analises-disponiveis');
+            container.innerHTML = '';
+
+            analyses.forEach(analise => {
+                const card = document.createElement('div');
+                card.classList.add('card', 'text-center', 'mb-3');
+
+                const cardHeader = document.createElement('div');
+                cardHeader.classList.add('card-header');
+                cardHeader.textContent = `Análise ID: ${analise.id}`;
+
+                const cardBody = document.createElement('div');
+                cardBody.classList.add('card-body');
+
+                const cardTitle = document.createElement('h5');
+                cardTitle.classList.add('card-title');
+                cardTitle.textContent = `Dataset ID: ${analise.dataset_id_id}`;
+
+                const cardText = document.createElement('p');
+                cardText.classList.add('card-text');
+                cardText.textContent = `Tipo de Análise: ${analise.analysis_type}`;
+
+                const cardLink = document.createElement('a');
+                cardLink.href = '#';
+                cardLink.classList.add('btn', 'btn-primary');
+                cardLink.textContent = 'Ver detalhes';
+
+                cardBody.appendChild(cardTitle);
+                cardBody.appendChild(cardText);
+                cardBody.appendChild(cardLink);
+
+                const cardFooter = document.createElement('div');
+                cardFooter.classList.add('card-footer', 'text-body-secondary');
+                cardFooter.textContent = `Criado em: ${formatarData(analise.created_at)}`;
+
+                card.appendChild(cardHeader);
+                card.appendChild(cardBody);
+                card.appendChild(cardFooter);
+
+                container.appendChild(card);
+            });
+        }
+
+        // Função para formatar a data para 'dd/mm hh:mm'
+        function formatarData(dataISO) {
+            const data = new Date(dataISO);
+            const dia = String(data.getDate()).padStart(2, '0');
+            const mes = String(data.getMonth() + 1).padStart(2, '0'); // Mês inicia em zero
+            const ano = data.getFullYear();
+            const hora = String(data.getHours()).padStart(2, '0');
+            const minuto = String(data.getMinutes()).padStart(2, '0');
+            return `${dia}/${mes}/${ano} às ${hora}:${minuto}`;
+        }
+
+        // Função para exibir o dataset de forma amigável
+        function exibirDataset(dataset) {
+            const container = document.getElementById('dataset-content'); // Certifique-se de que este elemento existe no seu HTML
+            const html = `
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <strong>${dataset.filename.length > 10 ? dataset.filename.substring(0, 20) + '..' : dataset.filename}.csv</strong>
+                        <button class="btn btn-danger btn-sm float-end" onclick="removeDataset(${dataset.id}).then(carregarDatasets)">Excluir</button>
+                        </div>
+                        <div class="card-body">
+                            <p>                    
+                                <span class="badge text-bg-primary rounded-pill ${dataset.status === 'PROCESSED' ? 'bg-success' : 'bg-secondary'}">${dataset.status}</span>
+                                <span class="ms-3">${dataset.status === 'PROCESSED' ? '✅' : '⏳'}</span>
+                                <strong  >ID:</strong> ${dataset.id}
+                                
+                            </p>
+                            <p><strong>Data de Envio:</strong> ${formatarData(dataset.uploaded_at)}</p>
+                            
+                            <div class="accordion" id="accordionExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${dataset.id}" aria-expanded="true" aria-controls="collapse${dataset.id}">
+                                            <span class="badge text-bg-primary me-3 rounded-pill">${dataset.columns.length}</span> Colunas 
+                                        </button>
+                                        
+                                    </h2>
+                                    <div id="collapse${dataset.id}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            
+                                            <ul>
+                                                ${dataset.columns.map(coluna => `<li>${coluna}</li>`).join('')}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                
+    `;
+            container.innerHTML += html;
+        }
+
+        async function carregarDatasets() {
+            const datasets = await getDatasets();
+
+            // Limpar o conteúdo anterior
+            document.getElementById('dataset-content').innerHTML = '';
+
+            // Exibir cada dataset
+            datasets.forEach(dataset => {
+                exibirDataset(dataset);
+            });
+        }
+
+        // Chamar a função para carregar e exibir os datasets
+
+
+        document.getElementById('formFile').addEventListener('change', async (event) => {
+            const result = await uploadFile();
+            console.log(result);
+
+            carregarDatasets();
+
+        });
+
+        async function carregarOpcoesDatasetOld() {
+            const datasets = await getDatasets();
+            const selectElement = document.querySelector('select[aria-label="Relação de dataset cadastrado"]');
+            const targetColumnElement = document.getElementById('target_column');
+
+            // Limpar as opções anteriores
+            selectElement.innerHTML = '<option selected>Selecione o seu database</option>';
+            targetColumnElement.innerHTML = '';
+
+
+            // Adicionar novas opções
+            datasets.forEach(dataset => {
+                const option = document.createElement('option');
+                option.value = dataset.id;
+                option.textContent = `ID: ${dataset.id} - ${dataset.status}`;
+                selectElement.appendChild(option);
+            });
+
+            // Adicionar evento de mudança para carregar colunas
+            selectElement.addEventListener('change', async (event) => {
+                const datasetId = event.target.value;
+
+                const filterSelect = document.getElementById('filter-select'); // Certifique-se de que este elemento existe
+                const targetColumnElement = document.getElementById('target-column-element'); // Defina corretamente
+
+                if (datasetId) {
+                    const data = await getDataset(datasetId);
+
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    } else {
+                        const resultadosContent = document.getElementById('resultados-content');
+                        resultadosContent.innerHTML = '';
+
+                    }
+
+                    targetColumnElement.innerHTML = '';
+
+                    // Criar o select para atributos
+                    const selectAttributes = document.createElement('select');
+                    selectAttributes.classList.add('form-select');
+                    selectAttributes.setAttribute('aria-label', 'Atributos disponíveis');
+
+                    const defaultOption = document.createElement('option');
+                    defaultOption.selected = true;
+                    defaultOption.disabled = true;
+                    defaultOption.textContent = 'Escolher atributos';
+                    selectAttributes.appendChild(defaultOption);
+
+                    // Adicionar opções dos atributos
+                    data.columns_metadata.forEach(column => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = column.column_name;
+                        optionElement.textContent = column.column_name;
+                        optionElement.dataset.type = column.data_type; // Armazenar o tipo de dado
+                        selectAttributes.appendChild(optionElement);
+                    });
+
+                    targetColumnElement.appendChild(selectAttributes);
+
+                    // Botão "Buscar"
+                    const buttonBuscar = document.createElement('button');
+                    buttonBuscar.type = 'button';
+                    buttonBuscar.classList.add('btn', 'btn-outline-secondary');
+                    buttonBuscar.textContent = 'Treinar base';
+                    targetColumnElement.appendChild(buttonBuscar);
+
+                    // Event listener para o botão "Buscar"
+                    buttonBuscar.addEventListener('click', async () => {
+                        const selectedAttribute = selectAttributes.value;
+                        const analysis = await getAnalysis(datasetId, selectedAttribute);
+                        console.log(analysis);
+                    });
+
+                    // Botão de dropdown para filtrar tipos
+                    const buttonDropdown = document.createElement('button');
+                    buttonDropdown.type = 'button';
+                    buttonDropdown.classList.add('btn', 'btn-outline-secondary', 'dropdown-toggle', 'dropdown-toggle-split');
+                    buttonDropdown.setAttribute('data-bs-toggle', 'dropdown');
+                    buttonDropdown.setAttribute('aria-expanded', 'false');
+                    const spanElement = document.createElement('span');
+                    spanElement.classList.add('visually-hidden');
+                    spanElement.textContent = 'Tipos de classificadores';
+                    buttonDropdown.appendChild(spanElement);
+                    targetColumnElement.appendChild(buttonDropdown);
+
+                    // Menu dropdown
+                    const ulElement = document.createElement('ul');
+                    ulElement.classList.add('dropdown-menu', 'dropdown-menu-end');
+                    targetColumnElement.appendChild(ulElement);
+
+                    // Opções de filtro
+                    ['continuous', 'categorical'].forEach(type => {
+                        const liElement = document.createElement('li');
+                        const aElement = document.createElement('a');
+                        aElement.classList.add('dropdown-item');
+                        aElement.textContent = type;
+                        aElement.addEventListener('click', () => {
+                            // Filtrar opções no selectAttributes
+                            for (let i = 0; i < selectAttributes.options.length; i++) {
+                                const option = selectAttributes.options[i];
+                                if (option.dataset.type === type || option.value === '') {
+                                    option.hidden = false;
+                                } else {
+                                    option.hidden = true;
+                                }
+                            }
+                            // Resetar a seleção
+                            selectAttributes.selectedIndex = 0;
+                        });
+                        liElement.appendChild(aElement);
+                        ulElement.appendChild(liElement);
+                    });
+                }
+            });
+
+        }
+
+        async function carregarOpcoesDataset() {
+
+            const datasets = await getDatasets();
+            const selectElement = document.querySelector('select[aria-label="Relação de dataset cadastrado"]');
+            const targetColumnElement = document.getElementById('target_column');
+
+            // Limpar as opções anteriores
+            selectElement.innerHTML = '<option selected>Selecione o seu dataset</option>';
+            targetColumnElement.innerHTML = '';
+
+            // Adicionar novas opções
+            datasets.forEach(dataset => {
+                const option = document.createElement('option');
+                option.value = dataset.id;
+                option.textContent = `ID: ${dataset.id} - ${dataset.status}`;
+                selectElement.appendChild(option);
+            });
+
+            // carrega o primeiro dataset
+            if (datasets.length > 0) {
+                const data = await getDataset(datasets[0].id);
+                renderFilter(data.columns_metadata);
+                createCarousel(data.images);
+                exibirFiltro(data.columns_metadata, document.getElementById('filter-select'), datasets[0].id);
+                const dados = await getAnalysesFiltered(datasets[0].id);
+                console.log(dados);
+            }
+
+            // Adicionar evento de mudança para carregar colunas
+            selectElement.addEventListener('change', async (event) => {
+                const datasetId = event.target.value;
+
+                const filterSelect = document.getElementById('filter-select');
+                const targetColumnElement = document.getElementById('target_column');
+
+                if (datasetId) {
+                    const data = await getDataset(datasetId);
+
+                    // Limpar o conteúdo anterior
+                    filterSelect.innerHTML = '';
+
+                    // Exibir as imagens
+                    createCarousel(data.images);
+
+                    renderFilter(data.columns_metadata);
+
+                    // Chamar a função para exibir o filtro
+                    exibirFiltro(data.columns_metadata, filterSelect, datasetId);
+                }
+            });
+        }
+
+        function alerta(message, type = 'alert-warning') {
+            const alertContainer = document.getElementById('alert-message');
+            const alert = document.createElement('div');
+            alert.classList.add('alert', type, 'alert-dismissible', 'fade', 'show');
+            alert.setAttribute('role', 'alert');
+            alert.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            alertContainer.appendChild(alert);
+        }
+
+        // Chamar a função para carregar e exibir as opções de datasets
+
+
+        function exibirFiltro(columnsMetadata, containerElement, datasetId) {
+            // Criar o contêiner do grupo de input
+            const inputGroup = document.createElement('div');
+            inputGroup.classList.add('input-group');
+
+            // Criar o select para os atributos (substituindo o input)
+            const selectAttributes = document.createElement('select');
+            selectAttributes.classList.add('form-select');
+            selectAttributes.setAttribute('aria-label', 'Selecione um atributo');
+
+            const defaultOption = document.createElement('option');
+            defaultOption.selected = true;
+            defaultOption.disabled = true;
+            defaultOption.textContent = 'Escolher atributo';
+            selectAttributes.appendChild(defaultOption);
+
+            // Adicionar opções dos atributos
+            columnsMetadata.forEach(column => {
+                const optionElement = document.createElement('option');
+                optionElement.value = column.column_name;
+                optionElement.textContent = column.column_name;
+                optionElement.dataset.type = column.data_type; // Armazenar o tipo de dado
+                selectAttributes.appendChild(optionElement);
+            });
+
+            inputGroup.appendChild(selectAttributes);
+
+            // Botão "Buscar"
+            const buttonBuscar = document.createElement('button');
+            buttonBuscar.type = 'button';
+            buttonBuscar.classList.add('btn', 'btn-outline-secondary');
+            buttonBuscar.textContent = 'Treinar a base';
+            inputGroup.appendChild(buttonBuscar);
+
+            // Event listener para o botão "Buscar"
+            buttonBuscar.addEventListener('click', async () => {
+                const selectedAttribute = selectAttributes.value;
+                const analysis = await getAnalysis(datasetId, selectedAttribute);
+
+                if (analysis.error) {
+                    alerta(analysis.error);
+                } else {
+                    alerta('Análise realizada com sucesso');
+                }
+
+            });
+
+            // Botão de dropdown para filtrar tipos
+            const buttonDropdown = document.createElement('button');
+            buttonDropdown.type = 'button';
+            buttonDropdown.classList.add('btn', 'btn-outline-secondary', 'dropdown-toggle', 'dropdown-toggle-split');
+            buttonDropdown.setAttribute('data-bs-toggle', 'dropdown');
+            buttonDropdown.setAttribute('aria-expanded', 'false');
+            const spanElement = document.createElement('span');
+            spanElement.classList.add('visually-hidden');
+            spanElement.textContent = 'Filtrar por tipo de dado';
+            buttonDropdown.appendChild(spanElement);
+            inputGroup.appendChild(buttonDropdown);
+
+            // Menu dropdown
+            const ulElement = document.createElement('ul');
+            ulElement.classList.add('dropdown-menu', 'dropdown-menu-end');
+
+            // Obter os tipos de data_type únicos
+            const dataTypes = [...new Set(columnsMetadata.map(column => column.data_type))];
+
+            // Criar os itens do dropdown com os data_types
+            dataTypes.forEach(type => {
+                const liElement = document.createElement('li');
+                const aElement = document.createElement('a');
+                aElement.classList.add('dropdown-item');
+                aElement.textContent = type;
+                aElement.addEventListener('click', () => {
+                    // Filtrar opções no selectAttributes
+                    for (let i = 0; i < selectAttributes.options.length; i++) {
+                        const option = selectAttributes.options[i];
+                        if (option.dataset.type === type || option.value === '') {
+                            option.hidden = false;
+                        } else {
+                            option.hidden = true;
+                        }
+                    }
+                    // Resetar a seleção
+                    selectAttributes.selectedIndex = 0;
+                });
+                liElement.appendChild(aElement);
+                ulElement.appendChild(liElement);
+            });
+
+            inputGroup.appendChild(ulElement);
+
+            // Limpar o container e adicionar o novo input group
+            containerElement.innerHTML = '';
+            containerElement.appendChild(inputGroup);
+        }
+
+        function createCarousel(images) {
+            if (!images || images.length === 0) {
+                // Se não houver imagens, não faz nada
+                return;
+            }
+
+            // Início da estrutura do carrossel
+            let carouselHtml = `
+                <div id="carouselExampleIndicators" class="carousel slide">
+                <div class="carousel-indicators">
+                `;
+
+            // Criar os indicadores
+            for (let i = 0; i < images.length; i++) {
+                carouselHtml += `
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="${i}" ${i === 0 ? 'class="active"' : ''} ${i === 0 ? 'aria-current="true"' : ''} aria-label="Slide ${i + 1}"></button>
+                    `;
+            }
+
+            carouselHtml += `
+                </div>
+                <div class="carousel-inner">
+                `;
+
+            // Criar os itens do carrossel
+            for (let i = 0; i < images.length; i++) {
+                const image = images[i];
+                const mimeType = 'image/png'; // Ajuste se necessário
+                carouselHtml += `
+                    <div class="carousel-item ${i === 0 ? 'active' : ''}">
+                    <img src="data:${mimeType};base64,${image.data}" class="d-block w-100" alt="${image.name}">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>${image.name}</h5>
+                    </div>
+                    </div>
+                    `;  // Adicionar o nome da imagem como legenda
+            }
+
+            carouselHtml += `
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Próximo</span>
+                </button>
+                </div>
+                `;
+
+            // Inserir o carrossel no elemento com id "carrosel-images"
+            const carouselContainer = document.getElementById('carrosel-images');
+            carouselContainer.innerHTML = carouselHtml;
+        }
+
+
+
+        function renderFilter(columnsMetadata) {
+            const dataList = document.getElementById('datalistOptions');
+            dataList.innerHTML = '';
+
+
+            columnsMetadata.forEach(column => {
+                const option = document.createElement('option');
+                option.value = column.column_name;
+                dataList.appendChild(option);
+            });
+
+            const input = document.getElementById('exampleDataList');
+            input.addEventListener('input', () => {
+                const value = input.value.toLowerCase();
+                const filteredColumns = columnsMetadata.filter(column => column.column_name.toLowerCase().includes(value));
+                renderColumnsMetadata(filteredColumns);
+            });
+
+        }
+
+        function renderColumnsMetadata(columnsMetadata) {
+            const container = document.getElementById('columns-metadata-content');
+            container.innerHTML = '';
+
+            columnsMetadata.forEach(column => {
+                const columnCard = document.createElement('div');
+                columnCard.classList.add('card', 'mb-3');
+
+                const columnCardBody = document.createElement('div');
+                columnCardBody.classList.add('card-body');
+
+                const columnTitle = document.createElement('h5');
+                columnTitle.classList.add('card-title');
+                columnTitle.textContent = column.column_name;
+
+                const columnType = document.createElement('p');
+                columnType.classList.add('card-text');
+                columnType.textContent = `Tipo de dado: ${column.data_type}`;
+
+                const columnDescription = document.createElement('p');
+                columnDescription.classList.add('card-text');
+                columnDescription.textContent = column.description;
+
+                columnCardBody.appendChild(columnTitle);
+                columnCardBody.appendChild(columnType);
+                columnCardBody.appendChild(columnDescription);
+                columnCard.appendChild(columnCardBody);
+                container.appendChild(columnCard);
+            });
+        }
+
+        async function carregarAnalisesOld() {
+            const analises = await getAnalyses();
+
+            const container = document.getElementById('analises-disponiveis');
+            container.innerHTML = '';
+
+            analises.results.forEach(analise => {
+                const card = document.createElement('div');
+                card.classList.add('card', 'mb-3');
+
+                const cardBody = document.createElement('div');
+                cardBody.classList.add('card-body');
+
+                const title = document.createElement('h5');
+                title.classList.add('card-title');
+                title.textContent = `Análise ID: ${analise.id}`;
+
+                const datasetId = document.createElement('p');
+                datasetId.classList.add('card-text');
+                datasetId.textContent = `Dataset ID: ${analise.dataset_id_id}`;
+
+                const analysisType = document.createElement('p');
+                analysisType.classList.add('card-text');
+                analysisType.textContent = `Tipo de Análise: ${analise.analysis_type}`;
+
+                const parameters = document.createElement('p');
+                parameters.classList.add('card-text');
+                parameters.textContent = `Parâmetros: ${analise.parameters}`;
+
+                const createdAt = document.createElement('p');
+                createdAt.classList.add('card-text');
+                createdAt.textContent = `Criado em: ${formatarData(analise.created_at)}`;
+
+                const status = document.createElement('p');
+                status.classList.add('card-text');
+                status.textContent = `Status: ${analise.status}`;
+
+                if (analise.error_message) {
+                    const errorMessage = document.createElement('p');
+                    errorMessage.classList.add('card-text', 'text-danger');
+                    errorMessage.textContent = `Erro: ${analise.error_message}`;
+                    cardBody.appendChild(errorMessage);
+                }
+
+                cardBody.appendChild(title);
+                cardBody.appendChild(datasetId);
+                cardBody.appendChild(analysisType);
+                cardBody.appendChild(parameters);
+                cardBody.appendChild(createdAt);
+                cardBody.appendChild(status);
+                card.appendChild(cardBody);
+                container.appendChild(card);
+            });
+        }
+
+        // Chamar a função para carregar e exibir as análises disponíveis
+        //carregarAnalises();
+
+        // se #analises-disponiveis  estoiver carregado, chama a função
+        if (document.getElementById('analises-disponiveis')) {
+            carregarAnalises();
+        }
+
+        function showAnalysisDetails(analysis) {
+            const modalBody = document.getElementById('analysisDetailsBody');
+            modalBody.innerHTML = `
+                        <p><strong>ID da Análise:</strong> ${analysis.id}</p>
+                        <p><strong>ID do Dataset:</strong> ${analysis.dataset_id_id}</p>
+                        <p><strong>Tipo de Análise:</strong> ${analysis.analysis_type}</p>
+                        <p><strong>Coluna Alvo:</strong> ${analysis.parameters.target_column}</p>
+                        <p><strong>Status:</strong> ${analysis.status}</p>
+                        <p><strong>Data de Criação:</strong> ${formatarData(analysis.created_at)}</p>
+                        ${analysis.error_message ? `<p class="text-danger"><strong>Erro:</strong> ${analysis.error_message}</p>` : ''}
+                    `;
+            const modal = new bootstrap.Modal(document.getElementById('analysisDetailsModal'));
+            modal.show();
+        }
+
+        function renderAnalysesAccordion() {
+
+
+            const analyses = [
+                {
+                    "id": 5,
+                    "dataset_id_id": 46,
+                    "analysis_type": "PREDICTION",
+                    "parameters": {
+                        "target_column": "weight_(kg)"
+                    },
+                    "created_at": "2024-11-27T01:08:56.544Z",
+                    "status": "COMPLETED",
+                    "error_message": ""
+                },
+                {
+                    "id": 6,
+                    "dataset_id_id": 46,
+                    "analysis_type": "PREDICTION",
+                    "parameters": {
+                        "target_column": "avg_bpm"
+                    },
+                    "created_at": "2024-11-27T01:58:04.154Z",
+                    "status": "COMPLETED",
+                    "error_message": ""
+                },
+                {
+                    "id": 7,
+                    "dataset_id_id": 46,
+                    "analysis_type": "PREDICTION",
+                    "parameters": {
+                        "target_column": "water_intake_(liters)"
+                    },
+                    "created_at": "2024-11-27T01:58:08.104Z",
+                    "status": "COMPLETED",
+                    "error_message": ""
+                },
+                {
+                    "id": 8,
+                    "dataset_id_id": 46,
+                    "analysis_type": "PREDICTION",
+                    "parameters": {
+                        "target_column": "experience_level"
+                    },
+                    "created_at": "2024-11-27T01:58:11.793Z",
+                    "status": "COMPLETED",
+                    "error_message": ""
+                }
+            ]
+
+            const container = document.getElementById('accordion-analysis');
+
+
+
+            /*
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Accordion Item #3
+                </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                </div>
+                </div>
+            </div>
+            */
+
+            analyses.forEach((analysis, index) => {
+                const accordionItem = document.createElement('div');
+                accordionItem.classList.add('accordion-item');
+
+                const accordionHeader = document.createElement('h2');
+                accordionHeader.classList.add('accordion-header');
+
+                const accordionButton = document.createElement('button');
+                accordionButton.classList.add('accordion-button', 'collapsed');
+                accordionButton.type = 'button';
+                accordionButton.setAttribute('data-bs-toggle', 'collapse');
+                accordionButton.setAttribute('data-bs-target', `#collapse${index}`);
+                accordionButton.setAttribute('aria-expanded', 'false');
+                accordionButton.setAttribute('aria-controls', `collapse${index}`);
+                accordionButton.textContent = `Análise ID: ${analysis.id} para a coluna ${analysis.parameters.target_column}`;
+
+                const accordionCollapse = document.createElement('div');
+                accordionCollapse.id = `collapse${index}`;
+                accordionCollapse.classList.add('accordion-collapse', 'collapse');
+                accordionCollapse.setAttribute('data-bs-parent', '#accordion-analysis');
+
+                const accordionBody = document.createElement('div');
+                accordionBody.classList.add('accordion-body');
+                accordionBody.innerHTML = `
+                        <p><strong>ID do Dataset:</strong> ${analysis.dataset_id_id}</p>
+                        <p><strong>Tipo de Análise:</strong> ${analysis.analysis_type}</p>
+                        <p><strong>Coluna Alvo:</strong> ${analysis.parameters.target_column}</p>
+                        <p><strong>Status:</strong> ${analysis.status}</p>
+                        <p><strong>Data de Criação:</strong> ${formatarData(analysis.created_at)}</p>
+                        ${analysis.error_message ? `<p class="text-danger"><strong>Erro:</strong> ${analysis.error_message}</p>` : ''}
+                    `;
+
+                accordionHeader.appendChild(accordionButton);
+                accordionCollapse.appendChild(accordionBody);
+                accordionItem.appendChild(accordionHeader);
+                accordionItem.appendChild(accordionCollapse);
+                container.appendChild(accordionItem);
+            });
+
+
+
+        }
+
+
+        document.querySelectorAll('.btn-primary').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const analysisId = event.target.closest('.card').querySelector('.card-header').textContent.split(': ')[1];
+                const analysis = analisets.find(a => a.id == analysisId);
+                showAnalysisDetails(analysis);
+            });
+        });
+
+
+
+        carregarDatasets();
+        carregarOpcoesDataset();
+
+    </script>
+
+
+</body>
+
+</html>
