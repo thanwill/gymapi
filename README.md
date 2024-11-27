@@ -26,49 +26,14 @@ GymAPI é uma aplicação Django para gerenciar datasets de academias, realizar 
 1. Clone o repositório:
 
    ```sh
-   git clone https://github.com/seu-usuario/gymapi.git
-   cd gymapi
-
-   Claro! Aqui está um exemplo de README para o seu projeto:
-
-
-# GymAPI
-
-GymAPI é uma aplicação Django para gerenciar datasets de academias, realizar análises e previsões com base nesses dados.
-
-## Funcionalidades
-
-- Upload de datasets em formato CSV.
-- Processamento e análise de datasets.
-- Treinamento de modelos de machine learning.
-- Armazenamento de metadados das colunas dos datasets.
-- Geração de relatórios de análise e previsões.
-- Remoção de análises.
-
-## Requisitos
-
-- Python 3.11
-- Django 5.1.3
-- Pandas
-- Scikit-learn
-- Matplotlib
-- Seaborn
-- Django REST Framework
-
-## Instalação
-
-1. Clone o repositório:
-
-   ```sh
-   git clone https://github.com/seu-usuario/gymapi.git
+   git clone [https://github.com/seu-usuario/gymapi.git](https://github.com/thanwill/gymapi.git)
    cd gymapi
    ```
 
 2. Crie um ambiente virtual e ative-o:
 
    ```sh
-   python -m venv .venv
-   source .venv/bin/activate  # No Windows, use .venv\Scripts\activate
+   python -m venv .venv   
    ```
 
 3. Instale as dependências:
@@ -144,10 +109,3 @@ Retorna as correlações entre as colunas do dataset especificado.
 3. Commit suas mudanças (`git commit -am 'Adiciona nova feature'`).
 4. Faça um push para a branch (`git push origin feature/nova-feature`).
 5. Crie um novo Pull Request.
-
-## Licença
-
-Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-```
-
-Este README fornece uma visão geral do projeto, instruções de instalação, uso dos endpoints da API, estrutura do projeto e informações sobre como contribuir. Ajuste conforme necessário para refletir as especificidades do seu projeto.
