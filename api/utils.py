@@ -112,17 +112,15 @@ def process_dataset(file_path, target_column, id):
         os.makedirs(media_dir, exist_ok=True)  # Garantir que a pasta existe
         model_path = os.path.join(media_dir, model_filename)  # Pasta onde os modelos serão salvos
 
+        # Salvar o modelo treinado em disco
         with open(model_path, 'wb') as model_file:
             pickle.dump(pipeline, model_file)
 
-        # Atualizar o banco com a referência ao modelo salvo
-        dataset.model_reference = model_path
-        dataset.status = 'COMPLETED'
-        dataset.save()
-        
+        # Parâmetros da análise        
         parameters = {
-            'target_column': target_column
-        }
+            "target_column" : target_column,
+            "model_reference": model_path            
+        }                    
                 
         # Salvar os resultados da análise no banco de dados
         analysis = Analyses(
@@ -133,6 +131,16 @@ def process_dataset(file_path, target_column, id):
         )
         
         analysis.save()
+
+        # Verifica se analise foi salva
+        if analysis.id is None:
+            dataset.status = 'ERROR'
+            dataset.error_message = "Erro ao salvar a análise no banco de dados."
+            dataset.save()
+            raise ValueError("Erro ao salvar a análise no banco de dados.")
+        
+        dataset.status = 'COMPLETED'
+        dataset.save()
         
         return {
             "info": info,
@@ -145,15 +153,21 @@ def process_dataset(file_path, target_column, id):
         
     except ValueError as e:
         if "Unknown label type: continuous" in str(e):
+                        
             response_data = {
                 "error": "Erro: Tipo de rótulo desconhecido. Talvez você esteja tentando ajustar um classificador em um alvo de regressão com valores contínuos."
             }
         else:
-            response_data = {
-                "error": str(e)
+            
+            response_data = { 
+               "error": str(e)
             }
+        
         dataset.status = 'ERROR'
+        dataset.error_message = e
         dataset.save()
+       
+        
         return response_data 
 
 
@@ -192,9 +206,6 @@ def create_and_train_pipeline(X_train, y_train, model_type):
     
     pipeline.fit(X_train, y_train)
     return pipeline
-
-
-
 
 def evaluate_model(pipeline, X_test, y_test, model_type='classifier'):
     y_pred = pipeline.predict(X_test)
