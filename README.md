@@ -55,6 +55,13 @@ GymAPI é uma aplicação Django para gerenciar datasets de academias, realizar 
    python manage.py runserver
    ```
 
+6. Utilizando Docker compose
+
+   ```sh
+   docker-compose build
+   docker-compose up
+   ```
+
 ## Uso
 
 ### Upload de Dataset

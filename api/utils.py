@@ -3,6 +3,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+
 from sklearn.metrics import classification_report, confusion_matrix, mean_squared_error, r2_score, accuracy_score
 from pandas.api.types import is_numeric_dtype, is_categorical_dtype
 from sklearn.feature_selection import SelectKBest
@@ -16,7 +19,6 @@ from api.models import Dataset
 import missingno as msno
 import pickle
 import os
-
 import numpy as np
 import pandas as pd
 
@@ -104,11 +106,11 @@ def process_dataset(file_path, target_column, id):
         
         dataset.status = 'COMPLETED'
         
-        # Salvar o modelo treinado em disco
-        
+        # Salvar o modelo treinado em disco    
         model_filename = f'model_{id}.pkl'
-        model_path = os.path.join('models', model_filename)  # Pasta onde os modelos serão salvos
-        os.makedirs('models', exist_ok=True)  # Garantir que a pasta existe
+        media_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'media', 'models'))
+        os.makedirs(media_dir, exist_ok=True)  # Garantir que a pasta existe
+        model_path = os.path.join(media_dir, model_filename)  # Pasta onde os modelos serão salvos
 
         with open(model_path, 'wb') as model_file:
             pickle.dump(pipeline, model_file)
@@ -167,11 +169,21 @@ def balance_dataset(df, target_column):
 def split_data(X, y, test_size=0.2, random_state=42):
     return train_test_split(X, y, test_size=test_size, random_state=random_state)
 
-def create_and_train_pipeline(X_train, y_train, model_type='classifier'):
+def create_and_train_pipeline(X_train, y_train, model_type):
     if model_type == 'classifier':
-        model = RandomForestClassifier(random_state=42)
-    else:
+        # Escolher o modelo de classificação
+        model = LogisticRegression(random_state=42)
+    elif model_type == 'regressor':
+        # Escolher o modelo de regressão
         model = RandomForestRegressor(random_state=42)
+    elif model_type == 'categorical':
+        # Escolher o modelo para dados categóricos
+        model = SVC(random_state=42)
+    elif model_type == 'continuous':
+        # Escolher o modelo para dados contínuos
+        model = RandomForestRegressor(random_state=42)
+    else:
+        raise ValueError("Tipo de modelo desconhecido. Use 'classifier', 'regressor', 'categorical' ou 'continuous'.")
     
     pipeline = Pipeline([
         ('scaler', StandardScaler()),

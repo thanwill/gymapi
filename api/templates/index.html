@@ -16,8 +16,8 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav" style="height: 10vh;">                
-                
+            <div class="collapse navbar-collapse" id="navbarNav" style="height: 5vh;">
+
             </div>
         </div>
     </nav>
@@ -252,48 +252,6 @@
             return data;
         }
 
-        const analisets = [
-            {
-                "id": 2,
-                "dataset_id_id": 40,
-                "analysis_type": "PREDICTION",
-                "parameters": {
-                    "target_column": "max_bpm"
-                },
-                "created_at": "2024-11-26T21:07:06.835Z",
-                "status": "COMPLETED",
-                "error_message": ""
-            },
-            {
-                "id": 4,
-                "dataset_id_id": 40,
-                "analysis_type": "PREDICTION",
-                "parameters": {
-                    "target_column": "age"
-                },
-                "created_at": "2024-11-26T23:37:36.538Z",
-                "status": "COMPLETED",
-                "error_message": ""
-            }
-        ]
-
-        /*
-        <div class="card text-center">
-        <div class="card-header">
-            Featured
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
-        <div class="card-footer text-body-secondary">
-            2 days ago
-        </div>
-        </div>
-        */
-
-
 
         function renderAnalysesCollapse(analises) {
             const container = document.getElementById('analises-disponiveis');
@@ -312,50 +270,6 @@
             */
 
             analises.forEach(analise => {
-                const card = document.createElement('div');
-                card.classList.add('card', 'text-center', 'mb-3');
-
-                const cardHeader = document.createElement('div');
-                cardHeader.classList.add('card-header');
-                cardHeader.textContent = `Análise ID: ${analise.id}`;
-
-                const cardBody = document.createElement('div');
-                cardBody.classList.add('card-body');
-
-                const cardTitle = document.createElement('h5');
-                cardTitle.classList.add('card-title');
-                cardTitle.textContent = `Dataset ID: ${analise.dataset_id_id}`;
-
-                const cardText = document.createElement('p');
-                cardText.classList.add('card-text');
-                cardText.textContent = `Tipo de Análise: ${analise.analysis_type}`;
-
-                const cardLink = document.createElement('a');
-                cardLink.href = '#';
-                cardLink.classList.add('btn', 'btn-primary');
-                cardLink.textContent = 'Ver detalhes';
-
-                cardBody.appendChild(cardTitle);
-                cardBody.appendChild(cardText);
-                cardBody.appendChild(cardLink);
-
-                const cardFooter = document.createElement('div');
-                cardFooter.classList.add('card-footer', 'text-body-secondary');
-                cardFooter.textContent = `Criado em: ${formatarData(analise.created_at)}`;
-
-                card.appendChild(cardHeader);
-                card.appendChild(cardBody);
-                card.appendChild(cardFooter);
-
-                container.appendChild(card);
-            });
-        }
-
-        function renderAnalysesOld(analyses) {
-            const container = document.getElementById('analises-disponiveis');
-            container.innerHTML = '';
-
-            analyses.forEach(analise => {
                 const card = document.createElement('div');
                 card.classList.add('card', 'text-center', 'mb-3');
 
@@ -470,128 +384,7 @@
 
         });
 
-        async function carregarOpcoesDatasetOld() {
-            const datasets = await getDatasets();
-            const selectElement = document.querySelector('select[aria-label="Relação de dataset cadastrado"]');
-            const targetColumnElement = document.getElementById('target_column');
-
-            // Limpar as opções anteriores
-            selectElement.innerHTML = '<option selected>Selecione o seu database</option>';
-            targetColumnElement.innerHTML = '';
-
-
-            // Adicionar novas opções
-            datasets.forEach(dataset => {
-                const option = document.createElement('option');
-                option.value = dataset.id;
-                option.textContent = `ID: ${dataset.id} - ${dataset.status}`;
-                selectElement.appendChild(option);
-            });
-
-            // Adicionar evento de mudança para carregar colunas
-            selectElement.addEventListener('change', async (event) => {
-                const datasetId = event.target.value;
-
-                const filterSelect = document.getElementById('filter-select'); // Certifique-se de que este elemento existe
-                const targetColumnElement = document.getElementById('target-column-element'); // Defina corretamente
-
-                if (datasetId) {
-                    const data = await getDataset(datasetId);
-
-                    if (data.error) {
-                        alert(data.error);
-                        return;
-                    } else {
-                        const resultadosContent = document.getElementById('resultados-content');
-                        resultadosContent.innerHTML = '';
-
-                    }
-
-                    targetColumnElement.innerHTML = '';
-
-                    // Criar o select para atributos
-                    const selectAttributes = document.createElement('select');
-                    selectAttributes.classList.add('form-select');
-                    selectAttributes.setAttribute('aria-label', 'Atributos disponíveis');
-
-                    const defaultOption = document.createElement('option');
-                    defaultOption.selected = true;
-                    defaultOption.disabled = true;
-                    defaultOption.textContent = 'Escolher atributos';
-                    selectAttributes.appendChild(defaultOption);
-
-                    // Adicionar opções dos atributos
-                    data.columns_metadata.forEach(column => {
-                        const optionElement = document.createElement('option');
-                        optionElement.value = column.column_name;
-                        optionElement.textContent = column.column_name;
-                        optionElement.dataset.type = column.data_type; // Armazenar o tipo de dado
-                        selectAttributes.appendChild(optionElement);
-                    });
-
-                    targetColumnElement.appendChild(selectAttributes);
-
-                    // Botão "Buscar"
-                    const buttonBuscar = document.createElement('button');
-                    buttonBuscar.type = 'button';
-                    buttonBuscar.classList.add('btn', 'btn-outline-secondary');
-                    buttonBuscar.textContent = 'Treinar base';
-                    targetColumnElement.appendChild(buttonBuscar);
-
-                    // Event listener para o botão "Buscar"
-                    buttonBuscar.addEventListener('click', async () => {
-                        const selectedAttribute = selectAttributes.value;
-                        const analysis = await getAnalysis(datasetId, selectedAttribute);
-                        console.log(analysis);
-                    });
-
-                    // Botão de dropdown para filtrar tipos
-                    const buttonDropdown = document.createElement('button');
-                    buttonDropdown.type = 'button';
-                    buttonDropdown.classList.add('btn', 'btn-outline-secondary', 'dropdown-toggle', 'dropdown-toggle-split');
-                    buttonDropdown.setAttribute('data-bs-toggle', 'dropdown');
-                    buttonDropdown.setAttribute('aria-expanded', 'false');
-                    const spanElement = document.createElement('span');
-                    spanElement.classList.add('visually-hidden');
-                    spanElement.textContent = 'Tipos de classificadores';
-                    buttonDropdown.appendChild(spanElement);
-                    targetColumnElement.appendChild(buttonDropdown);
-
-                    // Menu dropdown
-                    const ulElement = document.createElement('ul');
-                    ulElement.classList.add('dropdown-menu', 'dropdown-menu-end');
-                    targetColumnElement.appendChild(ulElement);
-
-                    // Opções de filtro
-                    ['continuous', 'categorical'].forEach(type => {
-                        const liElement = document.createElement('li');
-                        const aElement = document.createElement('a');
-                        aElement.classList.add('dropdown-item');
-                        aElement.textContent = type;
-                        aElement.addEventListener('click', () => {
-                            // Filtrar opções no selectAttributes
-                            for (let i = 0; i < selectAttributes.options.length; i++) {
-                                const option = selectAttributes.options[i];
-                                if (option.dataset.type === type || option.value === '') {
-                                    option.hidden = false;
-                                } else {
-                                    option.hidden = true;
-                                }
-                            }
-                            // Resetar a seleção
-                            selectAttributes.selectedIndex = 0;
-                        });
-                        liElement.appendChild(aElement);
-                        ulElement.appendChild(liElement);
-                    });
-                }
-            });
-
-        }
-
-        async function carregarOpcoesDataset() {
-
-            const datasets = await getDatasets();
+        function updateDatasetOptions(datasets) {
             const selectElement = document.querySelector('select[aria-label="Relação de dataset cadastrado"]');
             const targetColumnElement = document.getElementById('target_column');
 
@@ -606,6 +399,17 @@
                 option.textContent = `ID: ${dataset.id} - ${dataset.status}`;
                 selectElement.appendChild(option);
             });
+        }
+
+        // Chamar a função para carregar e exibir os datasets
+        carregarDatasets().then(datasets => {
+            updateDatasetOptions(datasets);
+        });
+
+        async function carregarOpcoesDataset() {
+
+            const datasets = await getDatasets();
+
 
             // carrega o primeiro dataset
             if (datasets.length > 0) {
@@ -698,7 +502,10 @@
                 if (analysis.error) {
                     alerta(analysis.error);
                 } else {
-                    alerta('Análise realizada com sucesso');
+                    setTimeout(() => {
+                        showAnalysisDetails(analysis);
+                    }, 1000);
+
                 }
 
             });
@@ -939,99 +746,38 @@
             modal.show();
         }
 
-        function renderAnalysesAccordion() {
-
-
-            const analyses = [
-                {
-                    "id": 5,
-                    "dataset_id_id": 46,
-                    "analysis_type": "PREDICTION",
-                    "parameters": {
-                        "target_column": "weight_(kg)"
-                    },
-                    "created_at": "2024-11-27T01:08:56.544Z",
-                    "status": "COMPLETED",
-                    "error_message": ""
-                },
-                {
-                    "id": 6,
-                    "dataset_id_id": 46,
-                    "analysis_type": "PREDICTION",
-                    "parameters": {
-                        "target_column": "avg_bpm"
-                    },
-                    "created_at": "2024-11-27T01:58:04.154Z",
-                    "status": "COMPLETED",
-                    "error_message": ""
-                },
-                {
-                    "id": 7,
-                    "dataset_id_id": 46,
-                    "analysis_type": "PREDICTION",
-                    "parameters": {
-                        "target_column": "water_intake_(liters)"
-                    },
-                    "created_at": "2024-11-27T01:58:08.104Z",
-                    "status": "COMPLETED",
-                    "error_message": ""
-                },
-                {
-                    "id": 8,
-                    "dataset_id_id": 46,
-                    "analysis_type": "PREDICTION",
-                    "parameters": {
-                        "target_column": "experience_level"
-                    },
-                    "created_at": "2024-11-27T01:58:11.793Z",
-                    "status": "COMPLETED",
-                    "error_message": ""
-                }
-            ]
+        function renderAnalysesAccordion(analyses) {
 
             const container = document.getElementById('accordion-analysis');
 
 
+            // verifica se analyses é maior que 0
+            if (analyses.length > 0) {
+                container.innerHTML = '';
+                analyses.forEach((analysis, index) => {
+                    const accordionItem = document.createElement('div');
+                    accordionItem.classList.add('accordion-item');
 
-            /*
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    Accordion Item #3
-                </button>
-                </h2>
-                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
-                </div>
-                </div>
-            </div>
-            */
+                    const accordionHeader = document.createElement('h2');
+                    accordionHeader.classList.add('accordion-header');
 
-            analyses.forEach((analysis, index) => {
-                const accordionItem = document.createElement('div');
-                accordionItem.classList.add('accordion-item');
+                    const accordionButton = document.createElement('button');
+                    accordionButton.classList.add('accordion-button', 'collapsed');
+                    accordionButton.type = 'button';
+                    accordionButton.setAttribute('data-bs-toggle', 'collapse');
+                    accordionButton.setAttribute('data-bs-target', `#collapse${index}`);
+                    accordionButton.setAttribute('aria-expanded', 'false');
+                    accordionButton.setAttribute('aria-controls', `collapse${index}`);
+                    accordionButton.textContent = `Análise ID: ${analysis.id} para a coluna ${analysis.parameters.target_column}`;
 
-                const accordionHeader = document.createElement('h2');
-                accordionHeader.classList.add('accordion-header');
+                    const accordionCollapse = document.createElement('div');
+                    accordionCollapse.id = `collapse${index}`;
+                    accordionCollapse.classList.add('accordion-collapse', 'collapse');
+                    accordionCollapse.setAttribute('data-bs-parent', '#accordion-analysis');
 
-                const accordionButton = document.createElement('button');
-                accordionButton.classList.add('accordion-button', 'collapsed');
-                accordionButton.type = 'button';
-                accordionButton.setAttribute('data-bs-toggle', 'collapse');
-                accordionButton.setAttribute('data-bs-target', `#collapse${index}`);
-                accordionButton.setAttribute('aria-expanded', 'false');
-                accordionButton.setAttribute('aria-controls', `collapse${index}`);
-                accordionButton.textContent = `Análise ID: ${analysis.id} para a coluna ${analysis.parameters.target_column}`;
-
-                const accordionCollapse = document.createElement('div');
-                accordionCollapse.id = `collapse${index}`;
-                accordionCollapse.classList.add('accordion-collapse', 'collapse');
-                accordionCollapse.setAttribute('data-bs-parent', '#accordion-analysis');
-
-                const accordionBody = document.createElement('div');
-                accordionBody.classList.add('accordion-body');
-                accordionBody.innerHTML = `
+                    const accordionBody = document.createElement('div');
+                    accordionBody.classList.add('accordion-body');
+                    accordionBody.innerHTML = `
                         <p><strong>ID do Dataset:</strong> ${analysis.dataset_id_id}</p>
                         <p><strong>Tipo de Análise:</strong> ${analysis.analysis_type}</p>
                         <p><strong>Coluna Alvo:</strong> ${analysis.parameters.target_column}</p>
@@ -1040,17 +786,18 @@
                         ${analysis.error_message ? `<p class="text-danger"><strong>Erro:</strong> ${analysis.error_message}</p>` : ''}
                     `;
 
-                accordionHeader.appendChild(accordionButton);
-                accordionCollapse.appendChild(accordionBody);
-                accordionItem.appendChild(accordionHeader);
-                accordionItem.appendChild(accordionCollapse);
-                container.appendChild(accordionItem);
-            });
-
+                    accordionHeader.appendChild(accordionButton);
+                    accordionCollapse.appendChild(accordionBody);
+                    accordionItem.appendChild(accordionHeader);
+                    accordionItem.appendChild(accordionCollapse);
+                    container.appendChild(accordionItem);
+                });
+            } else {
+                container.innerHTML = '<p class="text-muted">Nenhuma análise encontrada</p>';
+            }
 
 
         }
-
 
         document.querySelectorAll('.btn-primary').forEach(button => {
             button.addEventListener('click', (event) => {

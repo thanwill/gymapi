@@ -256,7 +256,7 @@ class CreateAnalysisView(APIView):
             if not target_column:
                 return Response({"error": "target_column parameter is required"}, status=status.HTTP_400_BAD_REQUEST)                    
             
-            # Processa o dataset
+            # Processa o dataset def process_dataset(file_path, target_column, id):
             response_data = process_dataset(file_path, target_column, dataset_id)
 
             return Response(response_data, status=status.HTTP_200_OK)
@@ -385,26 +385,11 @@ class PredictView(APIView):
             for target_column in target_columns:
                 if target_column not in df.columns:
                     return Response({"error": f"Target column '{target_column}' not found in dataset"}, status=status.HTTP_400_BAD_REQUEST)
-                
-                # Treina o modelo (exemplo usando regressão linear)
-                model = LinearRegression()
-                
-                X = df.drop(columns=target_column)
-                y = df[target_column]
-                
-                model.fit(X, y)
-                
-                # Converte os dados do usuário para DataFrame
-                user_df = pd.DataFrame([user_data])
-                
-                # Faz a previsão
-                prediction = model.predict(user_df)
-                
-                response_data[target_column] = prediction.tolist()
 
             return Response(response_data, status=status.HTTP_200_OK)
         except Dataset.DoesNotExist:
             return Response({"error": "Dataset not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
