@@ -6,6 +6,7 @@
     <title>Exibição de Dados</title>
     <!-- Bootstrap CSS via CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -16,48 +17,53 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav" style="height: 5vh;">
-
-            </div>
+            <div class="collapse navbar-collapse" id="navbarNav" style="height: 5vh;"></div>
         </div>
     </nav>
 
-    <div class="container mt-5">
+    <div class="container mt-5" style="min-height: calc(90vh - 10vh - 5vh);">
 
         <div class="d-flex align-items-start">
             <div class="nav flex-column nav-pills col-10 offset-1 col-lg-3 " id="v-pills-tab" role="tablist"
                 aria-orientation="vertical">
-                <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill"
-                    data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home"
-                    aria-selected="true">Datasets</button>
+
+                <button class="nav-link" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home"
+                    type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Datasets</button>
                 <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill"
                     data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile"
-                    aria-selected="false">Análises</button>
+                    aria-selected="false">Analysis</button>
+
+                <!-- Adiciona a opção Insights -->
+
+                <button class="nav-link active" id="v-pills-insights-tab" data-bs-toggle="pill"
+                    data-bs-target="#v-pills-insights" type="button" role="tab" aria-controls="v-pills-insights"
+                    aria-selected="false">Insights</button>
 
                 <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill"
                     data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages"
-                    aria-selected="false">Resultados</button>
+                    aria-selected="false">Explore</button>
 
-                <div id="search-list" class="mt-5">
+                <div id="search-list" class="mt-5 mb-3">
                     <input class="form-control" list="datalistOptions" id="exampleDataList"
                         placeholder="Pesquisar definições">
                     <datalist id="datalistOptions"></datalist>
                 </div>
 
+                <div id="alert-message-search"></div>
 
                 <div class="mt-3" style="max-height: 500px; overflow-y: auto;">
                     <div id="columns-metadata-content" class="mt-3"></div>
                 </div>
             </div>
 
-            <div class="tab-content col-10 offset-1 col-lg-6" id="v-pills-tabContent">
+            <div class="tab-content col-10 offset-1 col-lg-7" id="v-pills-tabContent">
 
                 <!-- INFORMAÇÃO DO DATASETS CADASTRADOS -->
-                <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
-                    aria-labelledby="v-pills-home-tab" tabindex="0">
+                <div class="tab-pane fade" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab"
+                    tabindex="0">
 
                     <div class="col-10 offset-1">
-                        <div class="mb-5 ">
+                        <div class="mb-3 ">
                             <label for="formFile" class="form-label">
                                 <h4>Envie seu arquivo</h4>
                                 <p>
@@ -65,8 +71,9 @@
                                 </p>
                             </label>
                             <input class="form-control" type="file" id="formFile">
+                            
                         </div>
-
+                        <div id="alert-message-datasets"></div>
                         <div id="dataset-content" class="mt-3"></div>
                         <div id="resultados-content" class="mt-3"></div>
 
@@ -74,7 +81,7 @@
 
                 </div>
 
-                <!-- SOLICITANDO NOVAS ANÁLISES -->
+                <!-- ANALYSES -->
                 <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab"
                     tabindex="0">
                     <div class="col-10 offset-1">
@@ -91,7 +98,10 @@
                         </div>
 
                         <div id="filter-select" class="mt-3"></div>
+
                         <div id="target_column" class="mt-3"></div>
+
+                        <div id="alert-message-analyses"></div>
 
                         <div id="datalist-options" class="m-3"></div>
 
@@ -99,26 +109,57 @@
 
                         <div class="accordion mt-4" id="accordion-analysis"></div>
 
+                        <div id="friendly-message-container"></div>
+
                     </div>
 
                 </div>
 
-                <!-- CONSUMINDO A BASE TREINADA -->
-                <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab"
-                    tabindex="0">
+                <!-- INSIGHTS -->
+                <div class="tab-pane fade show active" id="v-pills-insights" role="tabpanel"
+                    aria-labelledby="v-pills-insights-tab" tabindex="0">
 
                     <div class="col-10 offset-1">
-                        <h4>Consulte os resultados</h4>
+                        <h4>Insights</h4>
                         <p>
-                            <small>Confira a análise que deseja visualizar.</small>
+                            <small>Confira os insights gerados a partir das análises.</small>
                         </p>
-                        <div class="">
-
+                        <div class="row">
+                            <div class="col mb-4">
+                                <div class="input-group">
+                                    <input type="file" class="form-control" id="inputGroupFile04"
+                                        aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">Selecionar</button>
+                                    <ul class="dropdown-menu dropdown-menu-end"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <canvas id="generateCharts" width="400" height="200"></canvas>
+                            </div>
+                            <div id="alert-message-insights"></div>
                         </div>
 
                     </div>
 
                 </div>
+
+                <!-- EXPLORE -->
+                <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab"
+                    tabindex="0">
+
+                    <div class="col-10 offset-1">
+                        <h4>Explorar</h4>
+                        <p>
+                            <small>Confira a análise que deseja visualizar.</small>
+                        </p>
+                        <div id="alert-message-explore"></div>
+
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -133,34 +174,17 @@
                         resultados das análises.
                     </p>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase">Entidades</h5>
-                    <ul class="list-unstyled mb-0">
 
-                        <li>
-                            <a href="#!" class="text-dark">Datasets</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-dark">Análises</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-dark">Resultados</a>
-                        </li>
-                    </ul>
-                </div>
                 <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase">Contato</h5>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="mailto:contato@exemplo.com" class="text-dark">jonathan14willian@gmail.com</a>
-                        </li>
 
-                    </ul>
                 </div>
             </div>
         </div>
         <div class="text-center p-3 bg-dark text-white">
-            © 2023 Trabalho Final
+            2024 Tópicos Especiais em Software <br>
+            UP - Universidade Positivo <br>
+            Curutiba - PR
+
         </div>
     </footer>
 
@@ -198,6 +222,16 @@
                 body: formData
             });
             const data = await response.json();
+            
+            if (data.error) {
+                alerta(data.error, 'alert-danger', "alert-message-datasets");
+            } else {
+                alerta('Seu arquivo foi cadastrado!', 'alert-success', "alert-message-datasets");
+            }
+
+            // salva no localsotrage o caminho do arquivo
+            localStorage.setItem('file', data.file);
+
             return data;
         }
 
@@ -205,7 +239,11 @@
         async function getDataset(id) {
             const response = await fetch(`http://localhost:8000/api/datasets/${id}`);
             const data = await response.json();
-            renderColumnsMetadata(data.columns_metadata);
+            if (data.error) {
+                alerta("Não foi possível encontrar seu dataset.", 'alert-danger', "alert-message-datasets");
+            }else{
+                renderColumnsMetadata(data.columns_metadata);
+            }
             return data;
         }
 
@@ -232,8 +270,28 @@
             if (analises.length > 0) {
                 renderAnalysesCollapse(analises);
             } else {
-                alerta('Nenhuma análise encontrada', 'alert-info');
+                alerta('Não existem análises, selecione um dataset.', 'alert-info', "alert-message-analyses");
             }
+        }
+
+        // http://localhost:8000/api/insights/types
+
+        async function getInsights() {
+            const response = await fetch('http://localhost:8000/api/insights/types');
+            const data = await response.json();
+            return data;
+        }
+
+        // curl --location 'http://localhost:8000/api/images/erro'
+        async function getImages(arquivo) {
+            const response = await fetch('http://localhost:8000/api/images/' + arquivo);
+            const data = await response.json();
+
+            if (data.error) {
+                console.error(data.error);
+            } 
+
+            return data;
         }
 
         // curl de analises com até 4 filtros curl --location 'http://localhost:8000/api/analyses/filtered?analysis_type=PREDICTION&status=COMPLETED&target_column=experience_level&database_id=46'
@@ -246,7 +304,7 @@
             if (data.length > 0) {
                 renderAnalysesAccordion(data);
             } else {
-                alerta('Nenhuma análise encontrada', 'alert-info');
+                alerta('Nenhuma análise encontrada.', 'alert-info' , "alert-message-analyses");
             }
 
             return data;
@@ -368,9 +426,13 @@
             document.getElementById('dataset-content').innerHTML = '';
 
             // Exibir cada dataset
-            datasets.forEach(dataset => {
-                exibirDataset(dataset);
-            });
+            if (datasets.length > 0) {
+                datasets.forEach(dataset => {
+                    exibirDataset(dataset);
+                });
+            } else {
+                document.getElementById('dataset-content').innerHTML = '<p class="text-muted">Nenhum dataset encontrado</p>';
+            }
         }
 
         // Chamar a função para carregar e exibir os datasets
@@ -384,7 +446,7 @@
 
         });
 
-        function updateDatasetOptions(datasets) {
+        async function updateDatasetOptions(datasets) {
             const selectElement = document.querySelector('select[aria-label="Relação de dataset cadastrado"]');
             const targetColumnElement = document.getElementById('target_column');
 
@@ -393,12 +455,37 @@
             targetColumnElement.innerHTML = '';
 
             // Adicionar novas opções
-            datasets.forEach(dataset => {
-                const option = document.createElement('option');
-                option.value = dataset.id;
-                option.textContent = `ID: ${dataset.id} - ${dataset.status}`;
-                selectElement.appendChild(option);
-            });
+            if (datasets != undefined) {
+                datasets.forEach(dataset => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = dataset.id;
+                    optionElement.textContent = `ID: ${dataset.id} - ${dataset.status}`;
+                    selectElement.appendChild(optionElement);
+                });
+            } else {
+                const container = document.getElementById('friendly-message-container');
+
+                const images = await getImages('erro');
+                
+                console.log(images);
+                
+                const optionElement = document.createElement('option');
+                optionElement.textContent = 'Nenhum dataset encontrado.';                
+                selectElement.appendChild(optionElement);
+                
+                const messageHtml = `
+                    <div class="card mb-3">
+                        <img src="${images ? `data:image/png;base64,${images}` : ''}" class="card-img-top" alt="Friendly Image">
+                        <div class="card-body">
+                            <h5 class="card-title">Quase lá!</h5>
+                            <p class="card-text">Você precisa cadastrar um dataset ou selecionar um existente.</p>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = messageHtml;
+            }
+
+
         }
 
         // Chamar a função para carregar e exibir os datasets
@@ -410,8 +497,7 @@
 
             const datasets = await getDatasets();
 
-
-            // carrega o primeiro dataset
+            /* carrega o primeiro dataset
             if (datasets.length > 0) {
                 const data = await getDataset(datasets[0].id);
                 renderFilter(data.columns_metadata);
@@ -419,34 +505,24 @@
                 exibirFiltro(data.columns_metadata, document.getElementById('filter-select'), datasets[0].id);
                 const dados = await getAnalysesFiltered(datasets[0].id);
                 console.log(dados);
+            }*/
+
+            const selectElement = document.querySelector('select[aria-label="Relação de dataset cadastrado"]');
+            if (selectElement) {
+                selectElement.addEventListener('change', async (event) => {
+                    const datasetId = event.target.value;
+                    const data = await getDataset(datasetId);
+                    renderFilter(data.columns_metadata);
+                    createCarousel(data.images);
+                    exibirFiltro(data.columns_metadata, document.getElementById('filter-select'), datasetId);
+                    const dados = await getAnalysesFiltered(datasetId);
+                });
             }
 
-            // Adicionar evento de mudança para carregar colunas
-            selectElement.addEventListener('change', async (event) => {
-                const datasetId = event.target.value;
-
-                const filterSelect = document.getElementById('filter-select');
-                const targetColumnElement = document.getElementById('target_column');
-
-                if (datasetId) {
-                    const data = await getDataset(datasetId);
-
-                    // Limpar o conteúdo anterior
-                    filterSelect.innerHTML = '';
-
-                    // Exibir as imagens
-                    createCarousel(data.images);
-
-                    renderFilter(data.columns_metadata);
-
-                    // Chamar a função para exibir o filtro
-                    exibirFiltro(data.columns_metadata, filterSelect, datasetId);
-                }
-            });
         }
 
-        function alerta(message, type = 'alert-warning') {
-            const alertContainer = document.getElementById('alert-message');
+        function alerta(message, type = 'alert-warning', id_div ) {
+            const alertContainer = document.getElementById(id_div);
             const alert = document.createElement('div');
             alert.classList.add('alert', type, 'alert-dismissible', 'fade', 'show');
             alert.setAttribute('role', 'alert');
@@ -455,6 +531,15 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             `;
             alertContainer.appendChild(alert);
+
+            // Remove the alert after 3 seconds
+            setTimeout(() => {
+            alert.classList.remove('show');
+            alert.classList.add('hide');
+            setTimeout(() => {
+                alert.remove();
+            }, 500); // Wait for the fade-out transition to complete
+            }, 3000);
         }
 
         // Chamar a função para carregar e exibir as opções de datasets
@@ -500,7 +585,7 @@
                 const analysis = await getAnalysis(datasetId, selectedAttribute);
 
                 if (analysis.error) {
-                    alerta(analysis.error);
+                    alerta("Selecione um atributo válido.", 'alert-danger', "alert-message-analyses");
                 } else {
                     setTimeout(() => {
                         showAnalysisDetails(analysis);
@@ -750,7 +835,6 @@
 
             const container = document.getElementById('accordion-analysis');
 
-
             // verifica se analyses é maior que 0
             if (analyses.length > 0) {
                 container.innerHTML = '';
@@ -793,9 +877,8 @@
                     container.appendChild(accordionItem);
                 });
             } else {
-                container.innerHTML = '<p class="text-muted">Nenhuma análise encontrada</p>';
+                container.innerHTML = '<p class="text-muted">Nenhuma análise encontrada.</p>';
             }
-
 
         }
 
@@ -813,6 +896,116 @@
         carregarOpcoesDataset();
 
     </script>
+
+    <script>
+        document.getElementById('generateCharts').addEventListener('click', () => {
+            const fileInput = document.getElementById('inputGroupFile04');
+
+            if (!fileInput.files.length) {
+                alerta("Por favor, carregue um arquivo CSV.", 'alert-warning', "alert-message-insights");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                const csvData = event.target.result;
+                const parsedData = parseCSV(csvData);
+
+                // Gerar um gráfico de exemplo
+                generateChart(parsedData, "calorias_tipo_treino");
+            };
+
+            reader.readAsText(file);
+        });
+
+        function parseCSV(csv) {
+            const rows = csv.split("\n").map(row => row.split(","));
+            const headers = rows.shift();
+            return rows.map(row => {
+                const obj = {};
+                row.forEach((value, index) => {
+                    obj[headers[index]] = isNaN(value) ? value : parseFloat(value);
+                });
+                return obj;
+            });
+        }
+
+        function generateChart(data, insightId) {
+            const ctx = document.getElementById('generateCharts').getContext('2d');
+            if (insightId === "calorias_tipo_treino") {
+                const workoutTypes = Array.from(new Set(data.map(row => row["workout_type"])));
+                const caloriesByType = workoutTypes.map(type => {
+                    return data.filter(row => row["workout_type"] === type)
+                        .reduce((sum, row) => sum + row["calories_burned"], 0);
+                });
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: workoutTypes,
+                        datasets: [{
+                            label: 'Calorias Queimadas',
+                            data: caloriesByType,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            }
+        }
+        async function renderInsights() {
+            const insights = await getInsights();
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+
+            insights.insights_types.forEach(insight => {
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+                link.classList.add('dropdown-item');
+                link.href = '#';
+                link.textContent = insight.titulo;
+                link.dataset.graph = insight.grafico;
+
+                link.addEventListener('click', () => {
+                    generateChartFromInsight(insight);
+                });
+
+                listItem.appendChild(link);
+                dropdownMenu.appendChild(listItem);
+            });
+        }
+
+        function generateChartFromInsight(insight) {
+            const ctx = document.getElementById('generateCharts').getContext('2d');
+            new Chart(ctx, {
+                type: insight.grafico,
+                data: {
+                    labels: insight.labels,
+                    datasets: [{
+                        label: insight.titulo,
+                        data: insight.dados,
+                        backgroundColor: insight.cores,
+                        borderColor: insight.cores,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        renderInsights();
+    </script>
+
 
 
 </body>

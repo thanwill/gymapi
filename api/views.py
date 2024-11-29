@@ -2,12 +2,13 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.views import View
 from pandas.api.types import is_numeric_dtype, is_categorical_dtype
-from .utils import process_dataset, get_correlations, get_column_description
+from .util import process_dataset, get_correlations, get_column_description
 from .serializers import DatasetSerializer
 from .models import Dataset, ColumnMetadata, Analyses
+from .graphics import gerar_graficos, get_insights_types
 from django.shortcuts import render
 
 import os
@@ -392,4 +393,77 @@ class PredictView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+class InsightsView(APIView):
+    def get(self, request):
+        try:
+            # Get dataset_id from query parameters
+            dataset_id = request.query_params.get('dataset_id')
+            if not dataset_id:
+                return Response({"error": "dataset_id parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Get columns from query parameters
+            columns = request.query_params.get('insights_types')
+            insights_types = request.query_params.get('insights_types')
+            
+            if not insights_types:
+                return Response({"error": "insights_types parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
+            insights_types = insights_types.split(',')
+            
+            if not columns:
+                return Response({"error": "columns parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
+            columns = columns.split(',')
 
+            # Get dataset
+            dataset = Dataset.objects.get(id=dataset_id)
+            
+            # Verifica se o dataset existe
+            file_path = os.path.join(settings.MEDIA_ROOT, 'datasets', dataset.filename)
+            
+            if not os.path.exists(file_path):
+                return Response({"error": "Dataset file not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            # chama o método de gerar gráficos que retorna um html.Div com os gráficos
+            graficos = gerar_graficos(file_path, insights_types)
+            
+            # Se não houver gráficos, retorna um erro
+            if not graficos:
+                return Response({"error": "No informations found for the specified insights_types"}, status=status.HTTP_404_NOT_FOUND)
+            
+            return Response(graficos, status=status.HTTP_200_OK)
+        
+        except Dataset.DoesNotExist:
+            
+            return Response({"error": "Dataset not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+class GetInsightsTypesView(APIView):
+    def get(self, request):
+        try:
+            
+            insights_types = get_insights_types()
+            
+            if not insights_types:
+                return Response({"error": "No insights types found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            return Response({"insights_types": insights_types}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class GetImageView(APIView):
+    def get(self, request, image_name):
+
+        try:                    
+            
+            # Define the path to the image
+            image_path = os.path.join(settings.MEDIA_ROOT, 'images', f"{image_name}.png")
+            
+            # Check if the image exists
+            if not os.path.exists(image_path):
+                return Response({"error": "Image not found"}, status=status.HTTP_404_NOT_FOUND)
+            
+            # Open and read the image file
+            with open(image_path, 'rb') as image_file:
+                image_data = image_file.read()
+                image_base64 = base64.b64encode(image_data).decode('utf-8')
+                return Response(image_base64, content_type="application/json")
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
