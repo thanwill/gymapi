@@ -64,6 +64,12 @@ GymAPI é uma aplicação Django para gerenciar datasets de academias, realizar 
 
 ## Uso
 
+### URL base
+
+O projeto rodará por padrão na porta 8000.
+
+<http://localhost:8000/api/>
+
 ### Upload de Dataset
 
 Endpoint: `POST /api/datasets/upload`
