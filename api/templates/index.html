@@ -21,8 +21,6 @@
 
 </head>
 
-
-
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -149,15 +147,12 @@
                         <div class="row">
                             <div class="col mb-4">
                                 <div class="input-group mb-3">
-
                                     <select class="form-select" id="selec-dataset-insights">
                                         <option selected>Selecione o seu database</option>
                                     </select>
                                     <button class="btn btn-outline-secondary" type="button"
                                         id="insights-types">Consultar</button>
                                 </div>
-
-
                             </div>
                         </div>
                         <div id="alert-message-insights"></div>
@@ -171,7 +166,6 @@
                 <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab"
                     tabindex="0">
 
-
                     <div class="col-10 offset-1">
                         <div class="alert alert-primary d-flex align-items-center" role="alert">
                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -183,8 +177,9 @@
 
                             <div>
                                 <p>
-                                    As informações fornecidas são apenas para fins educacionais e informativos. 
-                                    Consulte um profissional qualificado para obter orientação específica e personalizada.
+                                    As informações fornecidas são apenas para fins educacionais e informativos.
+                                    Consulte um profissional qualificado para obter orientação específica e
+                                    personalizada.
                                 </p>
                             </div>
                         </div>
@@ -207,29 +202,27 @@
                                             <form id="prediction-form">
                                                 <div class="mb-3">
                                                     <label for="age" class="form-label">Idade</label>
-                                                    <input type="number" class="form-control" id="age" name="age"
+                                                    <input type="text" class="form-control" id="age" name="age"
                                                         required>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="height" class="form-label">Altura (m)</label>
-                                                    <input type="number" step="0.01" class="form-control" id="height"
-                                                        name="height" required>
+                                                    <label for="height_m" class="form-label">Altura (m)</label>
+                                                    <input type="text" class="form-control" id="height_m"
+                                                        name="height_m" required>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="gender" class="form-label">Gênero</label>
                                                     <select class="form-select" id="gender" name="gender" required>
-                                                        <option value="1">Masculino</option>
-                                                        <option value="0">Feminino</option>
+                                                        <option value="Male">Masculino</option>
+                                                        <option value="Female">Feminino</option>
                                                     </select>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="calories_burned" class="form-label">Calorias
-                                                        Queimadas</label>
-                                                    <input type="number" class="form-control" id="calories_burned"
-                                                        name="calories_burned" required>
-                                                </div>
-                                                <button type="submit"
-                                                    class="btn btn-success d-block mx-auto mt-3">Prever</button>
+                                                    <label for="weight_kg" class="form-label">Peso (kg)</label>
+                                                    <input type="text" class="form-control" id="weight_kg"
+                                                        name="weight_kg" required>
+                                                    <button type="submit"
+                                                        class="btn btn-success d-block mx-auto mt-3">Prever</button>
                                             </form>
                                             <div class="card mt-3">
                                                 <div class="card-body">
@@ -278,16 +271,88 @@
                     </script>
 
                     <script>
+
+                        // Adiciona máscara para idade
+                        // Adiciona máscara para idade
+                        const ageInput = document.getElementById('age');
+                        ageInput.addEventListener('focus', function (event) {
+                            let value = event.target.value;
+                            value = value.replace(' anos', '');
+                            event.target.value = value;
+                        });
+
+                        ageInput.addEventListener('blur', function (event) {
+                            let value = event.target.value.replace(/[^\d]/g, ''); // Remove caracteres não numéricos
+                            if (value.length > 3) {
+                                value = value.slice(0, 3); // Limita a entrada a 3 dígitos
+                            }
+                            if (parseInt(value) > 120) {
+                                value = '120'; // Limita a idade a 120 anos
+                            }
+                            event.target.value = value + ' anos'; // Adiciona ' anos' ao final
+                        });
+
+                        // Adiciona máscara para altura
+                        const heightInput = document.getElementById('height_m');
+
+                        // Remove ' cm' ao focar no campo
+                        heightInput.addEventListener('focus', function (event) {
+                            let value = event.target.value;
+                            value = value.replace(' cm', '');
+                            event.target.value = value;
+                        });
+
+                        // Adiciona ' cm' ao desfocar do campo
+                        heightInput.addEventListener('blur', function (event) {
+                            let value = event.target.value.replace(/[^\d]/g, ''); // Remove caracteres não numéricos
+                            if (value.length > 0) {
+                                value = value.slice(0, 1) + ',' + value.slice(1, 3); // Adiciona a vírgula após o primeiro dígito
+                            }
+                            event.target.value = value + ' cm'; // Adiciona ' cm' ao final
+                        });
+
+                        // Adiciona máscara para peso
+                        const weightInput = document.getElementById('weight_kg');
+                        weightInput.addEventListener('focus', function (event) {
+                            let value = event.target.value;
+                            value = value.replace(' kg', '');
+                            event.target.value = value;
+                        });
+
+                        weightInput.addEventListener('blur', function (event) {
+                            let value = event.target.value.replace(/[^\d]/g, ''); // Remove caracteres não numéricos
+                            if (value.length > 2) {
+                                value = value.slice(0, 2) + ',' + value.slice(2, 3); // Adiciona a vírgula após os dois primeiros dígitos
+                            }
+                            if (value.length > 4) {
+                                value = value.slice(0, 4); // Limita a entrada a 4 dígitos
+                            }
+                            event.target.value = value + ' kg'; // Adiciona ' kg' ao final
+                        });
+
+
                         document.getElementById('prediction-form').addEventListener('submit', async function (event) {
                             event.preventDefault();
                             const formData = new FormData(event.target);
+
                             const data = Object.fromEntries(formData.entries());
-                            const response = await fetch('http://localhost:8000/api/predict', {
+                            const payload = {
+                                analysis_id: "31",
+                                target_column: "workout_type",
+                                user_data: {
+                                    age: parseInt(data.age),
+                                    height_m: parseFloat(data["height_m"]),
+                                    gender: data.gender,
+                                    weight_kg: parseFloat(data["weight_kg"])
+                                }
+                            };
+                            console.log(payload);
+                            const response = await fetch('http://localhost:8000/api/analyses/predict/result', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify(data)
+                                body: JSON.stringify(payload)
                             });
                             const result = await response.json();
                             document.getElementById('prediction-result').textContent = result.prediction;
@@ -587,7 +652,7 @@
                     exibirDataset(dataset);
                 });
             } else {
-                document.getElementById('dataset-content').innerHTML = '<p class="text-muted">Nenhum dataset encontrado</p>';
+                document.getElementById('dataset-content').innerHTML = '<p class="text-muted">Nenhum dataset encontrado.</p>';
             }
         }
 
@@ -1041,19 +1106,54 @@
     </script>
 
     <script>
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const datasets = await getDatasets();
+            if (datasets.length > 0) {
+                const datasetId = datasets[0].id;
+                const response = await fetch(`http://localhost:8000/api/datasets/${datasetId}/download`);
+                if (response.ok) {
+                    const csvData = await response.text();
+                    const parsedData = parseCSV(csvData);
+
+                    const dataGraphAll = [
+                        'agua_vs_calorias',
+                        'agua_por_tipo_atividade',
+                        'calorias_por_tipo_atividade',
+                        'duracao_vs_calorias',
+                        'bpm_vs_experiencia',
+                        'distribuicao_idade'
+                    ];
+
+                    dataGraphAll.forEach(graphType => {
+                        generateChart(parsedData, graphType);
+                    });
+                } else {
+                    alerta("Erro ao baixar o CSV.", 'alert-danger', "alert-message-insights");
+                }
+            } else {
+                alerta("Nenhum dataset encontrado.", 'alert-warning', "alert-message-insights");
+            }
+        });
+
         // Add event listener to dropdown items
         document.querySelector('#insights-types').addEventListener('click', async (event) => {
 
             event.preventDefault();
             const selectElement = document.querySelector('#selec-dataset-insights');
 
-            const datasetId = selectElement.value;
+            let datasetId = selectElement.value;
 
             if (!datasetId) {
-                alerta("Por favor, selecione um dataset.", 'alert-warning', "alert-message-insights");
-                return;
+                const datasets = await getDatasets();
+                if (datasets.length > 0) {
+                    datasetId = datasets[0].id;
+                    selectElement.value = datasetId;
+                } else {
+                    alerta("Nenhum dataset encontrado.", 'alert-warning', "alert-message-insights");
+                    return;
+                }
             }
-
 
             console.log(datasetId);
 

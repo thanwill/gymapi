@@ -7,16 +7,19 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 
-def realizar_analise(df, target):
+def realizar_analise(df, features, target):
     # Verificar se a coluna alvo está no DataFrame
     if target not in df.columns:
         available_columns = df.columns.tolist()
         raise ValueError(f"Column '{target}' not found in dataset. Available columns are: {available_columns}")
 
-    # Convertendo as variáveis categóricas em numéricas
-    df = pd.get_dummies(df, drop_first=True)
+    # Verificar se todas as features estão no DataFrame
+    missing_features = [feature for feature in features if feature not in df.columns]
+    if missing_features:
+        available_columns = df.columns.tolist()
+        raise ValueError(f"Features {missing_features} not found in dataset. Available columns are: {available_columns}")
 
-    X = df.drop(target, axis=1)
+    X = df[features]
     y = df[target]
 
     # Identificar features numéricas e categóricas

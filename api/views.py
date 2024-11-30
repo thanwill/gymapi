@@ -8,7 +8,7 @@ from django.views import View
 from pandas.api.types import is_numeric_dtype, is_categorical_dtype
 from sklearn.exceptions import NotFittedError
 from .util import process_dataset, get_correlations, get_column_description
-from .serializers import DatasetSerializer
+from .serializers import AnalysesSerializer, DatasetSerializer
 from .models import Dataset, ColumnMetadata, Analyses
 from .graphics import gerar_graficos, get_insights_types
 from .analise import realizar_analise
@@ -251,22 +251,24 @@ class RemoveDatasetView(APIView):
 
 class CreateAnalysisView(APIView):
     def post(self, request):
-        # Obter dataset_id e target_column da requisição
+        # Obter dataset_id, features e target_column da requisição
         dataset_id = request.data.get("dataset_id")
+        features = request.data.get("features")
         target_column = request.data.get("target_column")
 
-        if not dataset_id or not target_column:
-            return Response({"error": "dataset_id e target_column são obrigatórios."}, status=status.HTTP_400_BAD_REQUEST)
+        if not dataset_id or not features or not target_column:
+            return Response({"error": "dataset_id, features e target_column são obrigatórios."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Obter o dataset do banco de dados
         dataset = Dataset.objects.get(id=dataset_id)
 
         # Carregar o dataset em um DataFrame
-        df = pd.read_csv(dataset.filename)
+        file_path = os.path.join(settings.MEDIA_ROOT, 'datasets', dataset.filename)
+        df = pd.read_csv(file_path)
 
         try:
             # Invocar a função realizar_analise
-            pipeline, X_test, y_test, model_type = realizar_analise(df, target_column)
+            pipeline, X_test, y_test, model_type = realizar_analise(df, features, target_column)
             
             # Salvar o modelo treinado no sistema de arquivos
             model_name = f"model_{model_type}_{dataset_id}.pkl"
@@ -275,11 +277,11 @@ class CreateAnalysisView(APIView):
                 pickle.dump(pipeline, model_file)
                 
             # Salvar os resultados da análise no banco de dados
-            
             analysis = Analyses.objects.create(
                 dataset_id=dataset,
                 analysis_type='PREDICTION',
                 parameters={
+                    "features": features,
                     "target_column": target_column
                 },
                 model_reference=model_name,
@@ -289,32 +291,68 @@ class CreateAnalysisView(APIView):
         
             analysis.save()
             
-                                 
+            serializer = AnalysesSerializer(analysis)            
             
-            return Response({"message": "Análise realizada com sucesso."}, status=status.HTTP_200_OK)
+            return Response({"message": "Análise realizada com sucesso.", "data": serializer.data}, status=status.HTTP_200_OK)
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
-class CreateAnalysisViewOld(APIView):
-
-    def get(self, request, dataset_id):
-        try:
-            dataset = Dataset.objects.get(id=dataset_id)
-            file_path = os.path.join(settings.MEDIA_ROOT, 'datasets', dataset.filename)
-            
-            # Obtém o target_column dos parâmetros da requisição
-            target_column = request.query_params.get('target_column')
-            if not target_column:
-                return Response({"error": "target_column parameter is required"}, status=status.HTTP_400_BAD_REQUEST)                    
-            
-            # Processa o dataset def process_dataset(file_path, target_column, id):
-            response_data = process_dataset(file_path, target_column, dataset_id)
-
-            return Response(response_data, status=status.HTTP_200_OK)
-        except Dataset.DoesNotExist:
-            return Response({"error": "Dataset not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PredictResultView(APIView):
+    def post(self, request):
+        try:
+            target_column = request.data.get('target_column')
+            user_data = request.data.get('user_data')
+            analysis_id = request.data.get('analysis_id')
+
+            if not target_column or not user_data or not analysis_id:
+                return Response(
+                    {"error": "dataset_id, target_column, and user_data are required."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Procurar em analises se existe um modelo treinado para o dataset_id e para o target_column
+            analyses = Analyses.objects.filter(id=analysis_id, parameters__target_column=target_column)
+            if not analyses.exists():
+                return Response(
+                    {"error": "No analysis found for the specified target_column."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+                
+            # Map user_data keys to the expected dataset column names
+            user_data_mapped = {
+                "age": user_data.get("age"),
+                "height_(m)": user_data.get("height_m"),
+                "gender": user_data.get("gender"),
+                "weight_(kg)": user_data.get("weight_kg")
+            }
+
+            # Carregar o modelo treinado usando o model_reference
+            model_name = analyses.first().model_reference
+            model_path = os.path.join(settings.MEDIA_ROOT, 'models', model_name)
+
+            if not os.path.exists(model_path):
+                return Response(
+                    {"error": "Model not found."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            with open(model_path, 'rb') as model_file:
+                model = pickle.load(model_file)
+
+            # Convert user data to DataFrame
+            user_df = pd.DataFrame([user_data_mapped])
+
+            # Fazer a previsão
+            prediction = model.predict(user_df)
+
+            return Response({"prediction": prediction.tolist()}, status=status.HTTP_200_OK)
+        except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
         
 class GetCorrelationsView(APIView):
     
