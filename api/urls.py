@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UploadDatasetView, ListDatasetsView, CreateAnalysisView, AnalysisResultsView, ListDatasetsViewByID, RemoveAnalysesView, RemoveDatasetView, GetCorrelationsView , FilteredAnalysisResultsView, CreateMultipleAnalysesView, PredictView, index, InsightsView, GetInsightsTypesView, GetImageView
+from .views import UploadDatasetView, ListDatasetsView, CreateAnalysisView, AnalysisResultsView, ListDatasetsViewByID, RemoveAnalysesView, RemoveDatasetView, GetCorrelationsView , FilteredAnalysisResultsView, CreateMultipleAnalysesView, PredictView, index, InsightsView, GetInsightsTypesView, GetImageView, DownloadDatasetView,PredictByAttributeView
 
 urlpatterns = [        
     
@@ -22,5 +22,9 @@ urlpatterns = [
     path('insights/types', GetInsightsTypesView.as_view(), name='get-insights-types'),
     
     path('images/<str:image_name>', GetImageView.as_view(), name='get-image'),
-        
+    
+    path('datasets/<str:dataset_id>/download', DownloadDatasetView.as_view(), name='download-dataset'),
+    
+    # endpoint resulta PredictByAttributeView 
+    path('results/predict/attribute', PredictByAttributeView.as_view(), name='predict-by-attribute'),
 ]

@@ -16,7 +16,7 @@ __pycache__/
 db.sqlite3
 
 # Django migrations
-*/migrations/*
+
 
 # Media files
 media/

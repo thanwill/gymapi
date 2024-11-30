@@ -1,3 +1,4 @@
+from venv import logger
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
@@ -5,11 +6,14 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.http import HttpResponse, JsonResponse
 from django.views import View
 from pandas.api.types import is_numeric_dtype, is_categorical_dtype
+from sklearn.exceptions import NotFittedError
 from .util import process_dataset, get_correlations, get_column_description
 from .serializers import DatasetSerializer
 from .models import Dataset, ColumnMetadata, Analyses
 from .graphics import gerar_graficos, get_insights_types
+from .analise import realizar_analise
 from django.shortcuts import render
+import pickle
 
 import os
 import csv
@@ -246,6 +250,52 @@ class RemoveDatasetView(APIView):
             return Response({"error": "Dataset not found"}, status=status.HTTP_404_NOT_FOUND)
 
 class CreateAnalysisView(APIView):
+    def post(self, request):
+        # Obter dataset_id e target_column da requisição
+        dataset_id = request.data.get("dataset_id")
+        target_column = request.data.get("target_column")
+
+        if not dataset_id or not target_column:
+            return Response({"error": "dataset_id e target_column são obrigatórios."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Obter o dataset do banco de dados
+        dataset = Dataset.objects.get(id=dataset_id)
+
+        # Carregar o dataset em um DataFrame
+        df = pd.read_csv(dataset.filename)
+
+        try:
+            # Invocar a função realizar_analise
+            pipeline, X_test, y_test, model_type = realizar_analise(df, target_column)
+            
+            # Salvar o modelo treinado no sistema de arquivos
+            model_name = f"model_{model_type}_{dataset_id}.pkl"
+            model_path = os.path.join(settings.MEDIA_ROOT, 'models', model_name)
+            with open(model_path, 'wb') as model_file:
+                pickle.dump(pipeline, model_file)
+                
+            # Salvar os resultados da análise no banco de dados
+            
+            analysis = Analyses.objects.create(
+                dataset_id=dataset,
+                analysis_type='PREDICTION',
+                parameters={
+                    "target_column": target_column
+                },
+                model_reference=model_name,
+                status='COMPLETED',
+                error_message=''
+            )
+        
+            analysis.save()
+            
+                                 
+            
+            return Response({"message": "Análise realizada com sucesso."}, status=status.HTTP_200_OK)
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class CreateAnalysisViewOld(APIView):
 
     def get(self, request, dataset_id):
         try:
@@ -467,3 +517,103 @@ class GetImageView(APIView):
                 return Response(image_base64, content_type="application/json")
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class DownloadDatasetView(APIView):
+    def get(self, request, dataset_id):
+        try:
+            dataset = Dataset.objects.get(id=dataset_id)
+            file_path = os.path.join(settings.MEDIA_ROOT, 'datasets', dataset.filename)
+            if not os.path.exists(file_path):
+                return Response({"error": "File not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            with open(file_path, 'rb') as f:
+                response = HttpResponse(f.read(), content_type='text/csv')
+                response['Content-Disposition'] = f'attachment; filename="{dataset.filename}"'
+                return response
+        except Dataset.DoesNotExist:
+            return Response({"error": "Dataset not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class PredictByAttributeView(APIView):
+    def post(self, request):
+        target_column = request.query_params.get('target_column')
+        if not target_column:
+            return Response({"error": "target_column parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            analyses = Analyses.objects.filter(parameters__target_column=target_column)
+            if not analyses.exists():
+                return Response({"error": "No analysis found for the specified target_column."}, status=status.HTTP_404_NOT_FOUND)
+            
+            analysis = analyses.first()
+            model_name = f"model_classifier_{analysis.dataset_id_id}.pkl" if target_column == 'workout_type' else f"model_regressor_{analysis.dataset_id_id}.pkl"
+            model_path = os.path.join(settings.MEDIA_ROOT, 'models', model_name)
+            if not os.path.exists(model_path):
+                return Response({"error": "Trained model not found."}, status=status.HTTP_404_NOT_FOUND)
+            
+            with open(model_path, 'rb') as model_file:
+                model = pickle.load(model_file)
+            
+            # Verifique se o modelo carregado é uma tupla
+            if isinstance(model, tuple):
+                model = model[0]  # Desempacote o pipeline do modelo
+            
+            user_data = request.data.get('user_data')
+            
+            if not user_data:
+                return Response({"error": "user_data parameter is required."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Lista das features esperadas pelo modelo
+            if target_column == 'workout_type':
+                required_features = [
+                    "age",
+                    "gender",
+                    "weight_(kg)",
+                    "height_(m)",
+                    "max_bpm",
+                    "resting_bpm",
+                    "session_duration_(hours)",
+                    "bmi",
+                    "water_intake_(liters)",
+                    "workout_frequency_(days/week)",
+                    "experience_level"
+                ]
+            else:
+                # Adicione as features para outros modelos de regressão se houver
+                required_features = [
+                    # Exemplo:
+                    "feature1",
+                    "feature2",
+                    # ...
+                ]
+            
+            missing_features = [feature for feature in required_features if feature not in user_data]
+            if missing_features:
+                return Response({"error": f"Missing required features: {', '.join(missing_features)}"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Criar DataFrame de entrada
+            input_df = pd.DataFrame([user_data])
+            
+            # Log das colunas do input_df
+            logger.debug(f'Colunas do input_df: {input_df.columns.tolist()}')
+            
+            # Realizar predição
+            prediction = model.predict(input_df)
+            
+            if target_column == 'workout_type':
+                prediction = prediction.tolist()
+            else:
+                prediction = prediction[0]                
+                            
+            return Response({"prediction": prediction}, status=status.HTTP_200_OK)
+        
+        except Analyses.DoesNotExist:
+            return Response({"error": "Analysis not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        except NotFittedError:
+            return Response({"error": "Model not trained."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            logger.exception("Erro durante a predição:")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
