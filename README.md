@@ -2,6 +2,9 @@
 
 GymAPI é uma aplicação Django para gerenciar datasets de academias, realizar análises e previsões com base nesses dados.
 
+![image](https://github.com/user-attachments/assets/b3861b2b-5d9e-4328-9af7-32ffa0b2da3a)
+
+
 ## Funcionalidades
 
 - Upload de datasets em formato CSV.
