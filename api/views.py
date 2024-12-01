@@ -11,7 +11,7 @@ from .util import process_dataset, get_correlations, get_column_description
 from .serializers import AnalysesSerializer, DatasetSerializer
 from .models import Dataset, ColumnMetadata, Analyses
 from .graphics import gerar_graficos, get_insights_types
-from .analise import realizar_analise
+from .analise import realizar_analise, gerar_imagem_dalle
 from django.shortcuts import render
 import pickle
 
@@ -546,7 +546,8 @@ class GetImageView(APIView):
             
             # Check if the image exists
             if not os.path.exists(image_path):
-                return Response({"error": "Image not found"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"error": "Image not found"}, status=status.HTTP_404_NOT_FOUND)            
+            
             
             # Open and read the image file
             with open(image_path, 'rb') as image_file:
