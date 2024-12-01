@@ -382,6 +382,12 @@ class GetCorrelationsView(APIView):
 class RemoveAnalysesView(APIView):
     def delete(self, request, analysis_id, *args, **kwargs):
         try:
+            
+            # se analysis_id for all, exclua todas as análises
+            if analysis_id == 'all':
+                Analyses.objects.all().delete()
+                return JsonResponse({"message": "All analyses deleted successfully."}, status=status.HTTP_204_NO_CONTENT)                
+            
             analysis = Analyses.objects.get(id=analysis_id)
             analysis.delete()
             return JsonResponse({"message": "Analysis deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
