@@ -7,7 +7,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-import openai
+
 import base64
 from io import BytesIO
 from PIL import Image
@@ -74,24 +74,3 @@ def realizar_analise(df, features, target):
     pipeline.fit(X_train, y_train)
 
     return pipeline, X_test, y_test, model_type
-
-def gerar_imagem_dalle(prompt, api_key):
-    openai.api_key = api_key
-    response = openai.Image.create(
-        model="dall-e-3",
-        prompt=prompt,
-        n=1,
-        size="1024x1024"
-    )
-    image_url = response['data'][0]['url']
-    
-    # Baixar a imagem
-    image_response = requests.get(image_url)
-    image = Image.open(BytesIO(image_response.content))
-    
-    # Converter a imagem para base64
-    buffered = BytesIO()
-    image.save(buffered, format="PNG")
-    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
-    
-    return img_str
