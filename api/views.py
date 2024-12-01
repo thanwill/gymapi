@@ -273,6 +273,7 @@ class CreateAnalysisView(APIView):
             # Salvar o modelo treinado no sistema de arquivos
             model_name = f"model_{model_type}_{dataset_id}.pkl"
             model_path = os.path.join(settings.MEDIA_ROOT, 'models', model_name)
+            os.makedirs(os.path.dirname(model_path), exist_ok=True)
             with open(model_path, 'wb') as model_file:
                 pickle.dump(pipeline, model_file)
                 
