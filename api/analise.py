@@ -1,17 +1,17 @@
 import pandas as pd
 from pandas.api.types import is_numeric_dtype, is_categorical_dtype
-import requests
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-
+import plotly.express as px
 import base64
 from io import BytesIO
-from PIL import Image
-# request
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix
+import plotly.graph_objects as go
 
 
 def realizar_analise(df, features, target):
@@ -73,4 +73,59 @@ def realizar_analise(df, features, target):
     # Treinar pipeline
     pipeline.fit(X_train, y_train)
 
-    return pipeline, X_test, y_test, model_type
+    return pipeline, X_test, y_test, model_type    
+
+def plot_confusion_matrix_old(pipeline, X_test, y_test, labels):
+    # Fazer previsões
+    y_pred = pipeline.predict(X_test)
+
+    # Calcular matriz de confusão
+    cm = confusion_matrix(y_test, y_pred, labels=labels)
+
+    # Criar um DataFrame para a matriz de confusão
+    cm_df = pd.DataFrame(cm, index=labels, columns=labels)
+
+    # Gerar o heatmap da matriz de confusão
+    fig = px.imshow(cm_df, text_auto=True, color_continuous_scale='Blues', labels=dict(x="Predicted", y="Actual", color="Count"))
+
+    fig.update_layout(title='Confusion Matrix', xaxis_title='Predicted Label', yaxis_title='True Label')
+
+    # Salvar a figura em um buffer de bytes
+    buf = BytesIO()
+    fig.write_image(buf, format="png")
+    buf.seek(0)
+
+    # Codificar a imagem em base64
+    img_base64 = base64.b64encode(buf.read()).decode('utf-8')
+
+    return img_base64
+
+def plot_confusion_matrix(pipeline, X_test, y_test, labels, image_name):
+    # Obter previsões
+    y_pred = pipeline.predict(X_test)
+    
+    # Calcular a matriz de confusão
+    cm = confusion_matrix(y_test, y_pred, labels=labels)
+    
+    # Criar a figura usando Plotly
+    fig = go.Figure(data=go.Heatmap(
+        z=cm,
+        x=labels,
+        y=labels,
+        hoverongaps=False,
+        colorscale='Viridis'
+    ))
+    
+    fig.update_layout(
+        title='Matriz de Confusão',
+        xaxis=dict(title='Predicted label'),
+        yaxis=dict(title='True label')
+    )
+    
+    # Definir o caminho completo para salvar a imagem
+    image_path = f"media/images/{image_name}"
+    
+    # Salvar a figura como imagem
+    fig.write_image(image_path)
+    
+    return image_path

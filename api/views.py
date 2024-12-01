@@ -11,7 +11,7 @@ from .util import process_dataset, get_correlations, get_column_description
 from .serializers import AnalysesSerializer, DatasetSerializer
 from .models import Dataset, ColumnMetadata, Analyses
 from .graphics import gerar_graficos, get_insights_types
-from .analise import realizar_analise
+from .analise import realizar_analise, plot_confusion_matrix
 from django.shortcuts import render
 import pickle
 
@@ -268,7 +268,7 @@ class CreateAnalysisView(APIView):
 
         try:
             # Invocar a função realizar_analise
-            pipeline, X_test, y_test, model_type = realizar_analise(df, features, target_column)
+            pipeline, X_test, y_test, model_type = realizar_analise(df, features, target_column)            
             
             # Salvar o modelo treinado no sistema de arquivos
             model_name = f"model_{model_type}_{dataset_id}.pkl"
