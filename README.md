@@ -2,6 +2,9 @@
 
 GymAPI é uma aplicação Django para gerenciar datasets de academias, realizar análises e previsões com base nesses dados.
 
+![image](https://github.com/user-attachments/assets/b3861b2b-5d9e-4328-9af7-32ffa0b2da3a)
+
+
 ## Funcionalidades
 
 - Upload de datasets em formato CSV.
@@ -29,33 +32,7 @@ GymAPI é uma aplicação Django para gerenciar datasets de academias, realizar 
    git clone https://github.com/thanwill/gymapi.git
    cd gymapi
    ```
-
-2. Crie um ambiente virtual e ative-o:
-
-   ```sh
-   python -m venv .venv   
-   ```
-
-3. Instale as dependências:
-
-   ```sh
-   pip install -r requirements.txt
-   ```
-
-4. Realize as migrações do banco de dados:
-
-   ```sh
-   python manage.py makemigrations
-   python manage.py migrate
-   ```
-
-5. Inicie o servidor de desenvolvimento:
-
-   ```sh
-   python manage.py runserver
-   ```
-
-6. Utilizando Docker compose
+2. Utilizando Docker compose
 
    ```sh
    docker-compose build
