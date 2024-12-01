@@ -361,6 +361,16 @@
                                 });
                                 const result = await response.json();
                                 document.getElementById('prediction-result').textContent = result.prediction;
+                            const exerciseEmojis = {
+                                Yoga: '🧘',
+                                HIIT: '🏋️',
+                                Cardio: '🏃',
+                                Strength: '💪'
+                            };
+
+                            const predictionResult = result.prediction;
+                            const emoji = exerciseEmojis[predictionResult] || '';
+                            document.getElementById('prediction-result').textContent = `${predictionResult} ${emoji}`;
                             } catch (error) {
                                 console.error('Error:', error);
                                 document.getElementById('prediction-result').textContent = 'Error fetching prediction.';
